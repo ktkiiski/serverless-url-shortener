@@ -1,0 +1,12 @@
+{
+    "extends": "tslint:recommended",
+    "rules": {
+        "triple-equals": [
+            true,
+            "allow-null-check"
+        ],
+        "object-literal-sort-keys": false
+    },
+    "jsRules": {},
+    "rulesDirectory": []
+}
