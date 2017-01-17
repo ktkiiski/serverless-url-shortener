@@ -1,32 +1,74 @@
+var path = require("path");
+
+// Read configuration from environment variables
+const nodeEnv = process.env.NODE_ENV || "dev";
+
+// Resolve modules, source, build and static paths
+var sourceDirPath = path.resolve(__dirname, "src");
+var buildDirPath = path.resolve(__dirname, "dist");
+var staticDirPath = path.resolve(__dirname, "static");
+var modulesDirPath = path.resolve(__dirname, "node_modules");
+
+/**
+ * The Webpack 2 configuration. The options are documented at
+ * https://webpack.js.org/configuration/
+ */
 module.exports = {
-    entry: "./src/index.tsx",
-    output: {
-        filename: "bundle.js",
-        path: __dirname + "/dist",
+    entry: {
+        // The main entry point source file
+        main: path.resolve(sourceDirPath, "index.tsx"),
     },
 
-    // Enable sourcemaps for debugging webpack's output.
-    devtool: "source-map",
-
-    resolve: {
-        // Add '.ts' and '.tsx' as resolvable extensions.
-        extensions: ["", ".webpack.js", ".web.js", ".ts", ".tsx", ".js"],
+    output: {
+        // Output files are place to this folder
+        path: buildDirPath,
+        // The file name template for the entry chunks
+        filename: "index.js",
+        // The URL to the output directory resolved relative to the HTML page
+        publicPath: "/",
+        // The name of the exported library, e.g. the global variable name
+        library: "MyLibrary",
+        // How the library is exported? E.g. "var", "this"
+        libraryTarget: "var",
     },
 
     module: {
-        loaders: [
-            // All files with a '.ts' or '.tsx' extension will be handled by 'ts-loader'.
-            { test: /\.tsx?$/, loader: "ts-loader" },
-            // All files with '.scss' extension will be handled in tandem by
-            // 'sass-loader', then 'css-loader' and then 'style-loader'
-            { test: /\.scss$/, loaders: ["style", "css", "sass"] },
-        ],
-
-        preLoaders: [
-            // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
-            { test: /\.js$/, loader: "source-map-loader" },
+        rules: [
+            // Pre-process sourcemaps for JavaScript files ('.js')
+            {
+                test: /\.js$/,
+                loader: "source-map-loader",
+                enforce: "pre",
+            },
+            // Compile TypeScript files ('.ts' or '.tsx')
+            {
+                test: /\.tsx?$/,
+                loader: "ts-loader",
+            },
+            // Compile SASS files ('.scss')
+            {
+                test: /\.scss$/,
+                use: [
+                    { loader: "style-loader" },
+                    { loader: "css-loader" },
+                    { loader: "sass-loader" },
+                ],
+            },
         ],
     },
+
+    resolve: {
+        // Look import modules from these directories
+        modules: [
+            sourceDirPath,
+            modulesDirPath,
+        ],
+        // Add '.ts' and '.tsx' as resolvable extensions.
+        extensions: [".ts", ".tsx", ".js"],
+    },
+
+    // When developing, enable sourcemaps for debugging webpack's output.
+    devtool: nodeEnv === "dev" ? "cheap-eval-source-map" : "hidden-source-map",
 
     // When importing a module whose path matches one of the following, just
     // assume a corresponding global variable exists and use that instead.
