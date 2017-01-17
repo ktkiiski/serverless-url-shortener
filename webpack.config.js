@@ -70,12 +70,16 @@ module.exports = {
     // When developing, enable sourcemaps for debugging webpack's output.
     devtool: nodeEnv === "dev" ? "cheap-eval-source-map" : "hidden-source-map",
 
-    // When importing a module whose path matches one of the following, just
-    // assume a corresponding global variable exists and use that instead.
-    // This is important because it allows us to avoid bundling all of our
-    // dependencies, which allows browsers to cache those libraries between builds.
-    externals: {
-        "react": "React",
-        "react-dom": "ReactDOM",
+    // Configuration for webpack-dev-server
+    devServer: {
+        contentBase: staticDirPath,
+        stats: {
+            colors: true,
+        },
+        watchOptions: {
+            poll: 1000,
+        },
+        host: process.env.HOST || "0.0.0.0",
+        port: process.env.PORT || 1111,
     },
 };
