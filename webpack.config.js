@@ -1,10 +1,16 @@
+var fs = require("fs");
 var path = require("path");
+
+// Read the TypeScript configuration and use it
+var tsconfigPath = path.resolve(__dirname, "tsconfig.json");
+var tsconfig = JSON.parse(fs.readFileSync(tsconfigPath, "utf8"));
 
 // Read configuration from environment variables
 const nodeEnv = process.env.NODE_ENV || "dev";
 
 // Resolve modules, source, build and static paths
-var sourceDirPath = path.resolve(__dirname, "src");
+var mainEntryPath = path.resolve(__dirname, tsconfig.files[0]);
+var sourceDirPath = path.dirname(mainEntryPath);
 var buildDirPath = path.resolve(__dirname, "dist");
 var staticDirPath = path.resolve(__dirname, "static");
 var modulesDirPath = path.resolve(__dirname, "node_modules");
@@ -16,8 +22,8 @@ var modulesDirPath = path.resolve(__dirname, "node_modules");
 module.exports = {
     entry: {
         // The main entry point source file
-        // NOTE: When using React, you may switch this to .tsx
-        main: path.resolve(sourceDirPath, "index.ts"),
+        // This is determined from the tsconfig.json file
+        main: mainEntryPath,
     },
 
     output: {
