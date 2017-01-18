@@ -34,7 +34,7 @@ module.exports = {
         // The URL to the output directory resolved relative to the HTML page
         publicPath: "/",
         // The name of the exported library, e.g. the global variable name
-        library: "MyLibrary",
+        library: "app",
         // How the library is exported? E.g. "var", "this"
         libraryTarget: "var",
     },
