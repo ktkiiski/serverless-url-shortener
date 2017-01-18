@@ -13,12 +13,8 @@
   "license": "ISC",
   "dependencies": {},
   "devDependencies": {
-    "@types/react": "^0.14.57",
-    "@types/react-dom": "^0.14.20",
     "css-loader": "^0.26.1",
     "node-sass": "^3.13.1",
-    "react": "^15.4.0",
-    "react-dom": "^15.4.0",
     "sass-loader": "^4.1.1",
     "source-map-loader": "^0.1.6",
     "style-loader": "^0.13.1",

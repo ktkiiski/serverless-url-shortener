@@ -16,7 +16,8 @@ var modulesDirPath = path.resolve(__dirname, "node_modules");
 module.exports = {
     entry: {
         // The main entry point source file
-        main: path.resolve(sourceDirPath, "index.tsx"),
+        // NOTE: When using React, you may switch this to .tsx
+        main: path.resolve(sourceDirPath, "index.ts"),
     },
 
     output: {
