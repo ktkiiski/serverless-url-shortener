@@ -5,9 +5,15 @@
             true,
             "allow-null-check"
         ],
+        "quotemark": [
+            false
+        ],
         "object-literal-sort-keys": false
     },
     "jsRules": {
+        "quotemark": [
+            false
+        ],
         "object-literal-sort-keys": false
     },
     "rulesDirectory": []
