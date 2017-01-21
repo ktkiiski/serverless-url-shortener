@@ -1,6 +1,7 @@
 const gulp = require("gulp");
 const gutil = require("gulp-util");
 const del = require("del");
+const _ = require("lodash");
 const webpack = require("webpack");
 const WebpackDevServer = require("webpack-dev-server");
 const webpackConfig = require("./webpack.config.js");
@@ -46,7 +47,7 @@ gulp.task("serve", callback => {
     const url = `http://${host}:${port}/`;
     // Modify the configuration so that the inline livereloading is enabled.
     // See: https://webpack.github.io/docs/webpack-dev-server.html#inline-mode-with-node-js-api
-    webpackConfig.entry.main.unshift(`webpack-dev-server/client?${url}`);
+    _.each(webpackConfig.entry, entries => entries.unshift(`webpack-dev-server/client?${url}`));
     new WebpackDevServer(webpack(webpackConfig), serverConfig).listen(port, host, err => {
         if (err) {
             throw new gutil.PluginError("serve", err);

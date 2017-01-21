@@ -27,14 +27,14 @@ module.exports = {
     entry: {
         // The main entry point source files.
         // These are determined from the tsconfig.json file
-        main: entryPaths,
+        app: entryPaths,
     },
 
     output: {
         // Output files are place to this folder
         path: buildDirPath,
         // The file name template for the entry chunks
-        filename: "index.js",
+        filename: "app.js",
         // The URL to the output directory resolved relative to the HTML page
         publicPath: "/",
         // The name of the exported library, e.g. the global variable name
