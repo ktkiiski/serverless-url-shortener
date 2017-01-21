@@ -2,6 +2,9 @@ const fs = require("fs");
 const path = require("path");
 const _ = require("lodash");
 
+// Webpack plugins
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
+
 // Read the TypeScript configuration and use it
 const tsconfigPath = path.resolve(__dirname, "tsconfig.json");
 const tsconfig = JSON.parse(fs.readFileSync(tsconfigPath, "utf8"));
@@ -56,11 +59,11 @@ module.exports = {
             // Compile SASS files ('.scss')
             {
                 test: /\.scss$/,
-                use: [
-                    { loader: "style-loader" },
+                // Extract to separate stylesheet file from the main bundle
+                loader: ExtractTextPlugin.extract([
                     { loader: "css-loader" },
                     { loader: "sass-loader" },
-                ],
+                ]),
             },
         ],
     },
@@ -87,4 +90,9 @@ module.exports = {
         host: process.env.HOST || "0.0.0.0",
         port: process.env.PORT || 1111,
     },
+
+    // Plugins
+    plugins: [
+        new ExtractTextPlugin("[name].css"),
+    ],
 };
