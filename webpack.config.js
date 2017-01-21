@@ -1,5 +1,6 @@
 var fs = require("fs");
 var path = require("path");
+var _ = require("lodash");
 
 // Read the TypeScript configuration and use it
 var tsconfigPath = path.resolve(__dirname, "tsconfig.json");
@@ -9,8 +10,8 @@ var tsconfig = JSON.parse(fs.readFileSync(tsconfigPath, "utf8"));
 const nodeEnv = process.env.NODE_ENV || "dev";
 
 // Resolve modules, source, build and static paths
-var mainEntryPath = path.resolve(__dirname, tsconfig.files[0]);
-var sourceDirPath = path.dirname(mainEntryPath);
+var entryPaths = tsconfig.files.map(file => path.resolve(__dirname, file));
+var sourceDirPaths = _.uniq(entryPaths.map(filePath => path.dirname(filePath)));
 var buildDirPath = path.resolve(__dirname, "dist");
 var staticDirPath = path.resolve(__dirname, "static");
 var modulesDirPath = path.resolve(__dirname, "node_modules");
@@ -21,9 +22,9 @@ var modulesDirPath = path.resolve(__dirname, "node_modules");
  */
 module.exports = {
     entry: {
-        // The main entry point source file
-        // This is determined from the tsconfig.json file
-        main: [mainEntryPath],
+        // The main entry point source files.
+        // These are determined from the tsconfig.json file
+        main: entryPaths,
     },
 
     output: {
@@ -66,10 +67,7 @@ module.exports = {
 
     resolve: {
         // Look import modules from these directories
-        modules: [
-            sourceDirPath,
-            modulesDirPath,
-        ],
+        modules: sourceDirPaths.concat([modulesDirPath]),
         // Add '.ts' and '.tsx' as resolvable extensions.
         extensions: [".ts", ".tsx", ".js"],
     },
