@@ -1,8 +1,14 @@
 const gulp = require("gulp");
 const gutil = require("gulp-util");
+const del = require("del");
 const webpack = require("webpack");
 const WebpackDevServer = require("webpack-dev-server");
 const webpackConfig = require("./webpack.config.js");
+
+/**
+ * Clean the build folder.
+ */
+gulp.task('clean', () => del(["dist/**/*"]));
 
 /**
  * Build and watch cycle (another option for development)

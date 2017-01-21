@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "start": "gulp serve",
+    "clean": "gulp clean",
     "build": "gulp build",
     "build:dev": "NODE_ENV=dev gulp build",
     "build:prod": "NODE_ENV=production gulp build",
@@ -12,6 +13,7 @@
   "dependencies": {},
   "devDependencies": {
     "css-loader": "^0.26.1",
+    "del": "^2.2.2",
     "gulp": "^3.9.1",
     "gulp-cli": "^1.2.2",
     "lodash": "^4.17.4",
