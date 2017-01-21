@@ -1,20 +1,20 @@
-var fs = require("fs");
-var path = require("path");
-var _ = require("lodash");
+const fs = require("fs");
+const path = require("path");
+const _ = require("lodash");
 
 // Read the TypeScript configuration and use it
-var tsconfigPath = path.resolve(__dirname, "tsconfig.json");
-var tsconfig = JSON.parse(fs.readFileSync(tsconfigPath, "utf8"));
+const tsconfigPath = path.resolve(__dirname, "tsconfig.json");
+const tsconfig = JSON.parse(fs.readFileSync(tsconfigPath, "utf8"));
 
 // Read configuration from environment variables
 const nodeEnv = process.env.NODE_ENV || "dev";
 
 // Resolve modules, source, build and static paths
-var entryPaths = tsconfig.files.map(file => path.resolve(__dirname, file));
-var sourceDirPaths = _.uniq(entryPaths.map(filePath => path.dirname(filePath)));
-var buildDirPath = path.resolve(__dirname, "dist");
-var staticDirPath = path.resolve(__dirname, "static");
-var modulesDirPath = path.resolve(__dirname, "node_modules");
+const entryPaths = tsconfig.files.map(file => path.resolve(__dirname, file));
+const sourceDirPaths = _.uniq(entryPaths.map(filePath => path.dirname(filePath)));
+const buildDirPath = path.resolve(__dirname, tsconfig.compilerOptions.outDir);
+const staticDirPath = path.resolve(__dirname, "static");
+const modulesDirPath = path.resolve(__dirname, "node_modules");
 
 /**
  * The Webpack 2 configuration. The options are documented at
