@@ -2,16 +2,18 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "open index.html",
-    "build": "webpack",
-    "build:dev": "NODE_ENV=dev webpack -d",
-    "build:prod": "NODE_ENV=production webpack",
-    "watch": "NODE_ENV=dev webpack-dev-server",
+    "start": "gulp serve",
+    "build": "gulp build",
+    "build:dev": "NODE_ENV=dev gulp build",
+    "build:prod": "NODE_ENV=production gulp build",
+    "watch": "NODE_ENV=dev gulp watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {},
   "devDependencies": {
     "css-loader": "^0.26.1",
+    "gulp": "^3.9.1",
+    "gulp-cli": "^1.2.2",
     "node-sass": "^3.13.1",
     "sass-loader": "^4.1.1",
     "source-map-loader": "^0.1.6",

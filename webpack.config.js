@@ -23,7 +23,7 @@ module.exports = {
     entry: {
         // The main entry point source file
         // This is determined from the tsconfig.json file
-        main: mainEntryPath,
+        main: [mainEntryPath],
     },
 
     output: {
