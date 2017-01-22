@@ -4,6 +4,7 @@ const _ = require("lodash");
 
 // Webpack plugins
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 // Read the TypeScript configuration and use it
 const tsconfigPath = path.resolve(__dirname, "tsconfig.json");
@@ -94,5 +95,9 @@ module.exports = {
     // Plugins
     plugins: [
         new ExtractTextPlugin("[name].css"),
+        new HtmlWebpackPlugin({
+            filename: "index.html",
+            hash: nodeEnv !== "dev",
+        }),
     ],
 };
