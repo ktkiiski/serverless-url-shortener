@@ -2,6 +2,4 @@ extends template.pug
 
 block content
   h1= htmlWebpackPlugin.options.title
-  p.
-    Pug is a terse and simple templating language with a
-    strong focus on performance and powerful features.
+  include:markdown-it index.md
