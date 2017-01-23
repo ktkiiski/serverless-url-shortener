@@ -14,3 +14,7 @@ trim_trailing_whitespace = true
 [package.json]
 indent_size = 2
 indent_style = space
+
+[*.{pug,jade}]
+indent_size = 2
+indent_style = space

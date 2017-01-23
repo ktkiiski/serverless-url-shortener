@@ -12,6 +12,7 @@ const tsconfig = JSON.parse(fs.readFileSync(tsconfigPath, "utf8"));
 
 // Read configuration from environment variables
 const nodeEnv = process.env.NODE_ENV || "dev";
+const debug = nodeEnv === "dev";
 
 // Resolve modules, source, build and static paths
 const entryPaths = tsconfig.files.map(file => path.resolve(__dirname, file));
@@ -68,13 +69,19 @@ module.exports = {
             // Ensure that any images references in HTML files are included
             {
                 test: /\.html?$/,
-                use: [{
-                    loader: 'html-loader',
-                    options: {
-                        attrs: ["img:src", "link:href"],
-                    },
-                }],
+                loader: 'html-loader',
+                options: {
+                    attrs: ["img:src", "link:href"],
+                },
             },
+            // Convert any Pug (previously "Jade") templates to HTML
+            {
+                test: /\.pug$/,
+                loader: 'pug-loader',
+                options: {
+                    pretty: debug,
+                },
+            }
         ],
     },
 
@@ -86,7 +93,7 @@ module.exports = {
     },
 
     // When developing, enable sourcemaps for debugging webpack's output.
-    devtool: nodeEnv === "dev" ? "cheap-eval-source-map" : "hidden-source-map",
+    devtool: debug ? "cheap-eval-source-map" : "hidden-source-map",
 
     // Configuration for webpack-dev-server
     devServer: {
@@ -106,10 +113,10 @@ module.exports = {
         new ExtractTextPlugin("[name].css"),
         new HtmlWebpackPlugin({
             filename: "index.html",
-            template: "src/index.html",
+            template: "src/index.pug",
             chunks: ['app'],
             inject: true,
-            hash: nodeEnv !== "dev",
+            hash: !debug,
         }),
     ],
 };
