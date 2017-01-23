@@ -2,6 +2,12 @@
 
 This is a boilerplate for creating projects that use Webpack 2 to compile a TypeScript application and SASS stylesheets into a ES5 JavaScript and CSS.
 
+Features:
+
+- Write your scripts in [TypeScript](http://www.typescriptlang.org/)
+- Write your stylesheets in [SASS](http://sass-lang.com/)
+- Generate static HTML pages from [Pug](https://pugjs.org/) templates
+
 To apply this template:
 
 ```bash
