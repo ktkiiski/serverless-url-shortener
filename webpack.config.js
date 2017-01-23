@@ -17,7 +17,6 @@ const nodeEnv = process.env.NODE_ENV || "dev";
 const entryPaths = tsconfig.files.map(file => path.resolve(__dirname, file));
 const sourceDirPaths = _.uniq(entryPaths.map(filePath => path.dirname(filePath)));
 const buildDirPath = path.resolve(__dirname, tsconfig.compilerOptions.outDir);
-const staticDirPath = path.resolve(__dirname, "static");
 const modulesDirPath = path.resolve(__dirname, "node_modules");
 
 /**
@@ -66,6 +65,16 @@ module.exports = {
                     { loader: "sass-loader" },
                 ]),
             },
+            // Ensure that any images references in HTML files are included
+            {
+                test: /\.html?$/,
+                use: [{
+                    loader: 'html-loader',
+                    options: {
+                        attrs: ["img:src", "link:href"],
+                    },
+                }],
+            },
         ],
     },
 
@@ -81,7 +90,7 @@ module.exports = {
 
     // Configuration for webpack-dev-server
     devServer: {
-        contentBase: staticDirPath,
+        contentBase: buildDirPath,
         stats: {
             colors: true,
         },
@@ -97,6 +106,9 @@ module.exports = {
         new ExtractTextPlugin("[name].css"),
         new HtmlWebpackPlugin({
             filename: "index.html",
+            template: "src/index.html",
+            chunks: ['app'],
+            inject: true,
             hash: nodeEnv !== "dev",
         }),
     ],
