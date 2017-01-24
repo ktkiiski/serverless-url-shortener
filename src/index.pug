@@ -1,5 +1,5 @@
 extends template.pug
 
 block content
-  h1= htmlWebpackPlugin.options.title
-  include:markdown-it index.md
+  include:markdown-it ../README.md
+  img(src=require("./images/broilerplate.png"))

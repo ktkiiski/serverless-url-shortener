@@ -81,7 +81,24 @@ module.exports = {
                 options: {
                     pretty: debug,
                 },
-            }
+            },
+            // Optimize image files and save them as files
+            {
+                test: /\.(gif|png|jpe?g|svg)$/,
+                use: [{
+                    loader: 'file-loader',
+                    options: {
+                        name: "images/[name].[hash].[ext]",
+                    },
+                }, {
+                    loader: 'image-webpack-loader',
+                    options: {
+                        progressive: true,
+                        optimizationLevel: 7,
+                        interlaced: false,
+                    },
+                }],
+            },
         ],
     },
 
@@ -97,7 +114,6 @@ module.exports = {
 
     // Configuration for webpack-dev-server
     devServer: {
-        contentBase: buildDirPath,
         stats: {
             colors: true,
         },
