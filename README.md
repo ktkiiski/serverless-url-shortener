@@ -14,8 +14,7 @@ To apply this template:
 
 ```bash
 git remote add template https://github.com/ktkiiski/ts-sass-boilerplate.git
-git fetch template
-git merge template/master
+git pull template master
 ```
 
 Remember to add your project metadata to the [`package.json`](./package.json), for example, `name`, `author`, `description`.
@@ -28,12 +27,24 @@ You need to install the required node packages:
 npm install
 ```
 
+### libpng issues
+
+Installing on some versions of OSX may raise errors with a [missing libpng dependency](https://github.com/tcoopman/image-webpack-loader/issues/51#issuecomment-273597313):
+```
+Module build failed: Error: dyld: Library not loaded: /usr/local/opt/libpng/lib/libpng16.16.dylib
+```
+This can be remedied by installing the newest version of libpng with [homebrew](http://brew.sh/):
+
+```sh
+brew install libpng
+```
+
 ## Run locally
 
 To run the app locally, start the local HTTP server and the build watch process:
 
 ```bash
-npm run watch
+npm start
 ```
 
 Then navigate your browser to http://0.0.0.0:1111/
