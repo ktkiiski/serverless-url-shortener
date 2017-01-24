@@ -1,5 +1,4 @@
 extends template.pug
 
 block content
-  include:markdown-it ../README.md
-  img(src=require("./images/broilerplate.png"))
+  != require("../README.md")

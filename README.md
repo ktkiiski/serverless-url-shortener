@@ -9,11 +9,13 @@ Features:
 - Write your scripts in [TypeScript](http://www.typescriptlang.org/)
 - Write your stylesheets in [SASS](http://sass-lang.com/)
 - Generate static HTML pages from [Pug](https://pugjs.org/) templates
+- Automatically include any images from your HTML, Pug, or Markdown files.
+- Include Markdown to your Pug templates. You may [include with filters](https://pugjs.org/language/includes.html#including-filtered-text) but `!= require("foo.md")` is preferred because it will also require any images.
 
 To apply this template:
 
 ```bash
-git remote add template https://github.com/ktkiiski/ts-sass-boilerplate.git
+git remote add template https://github.com/ktkiiski/broilerplate.git
 git pull template master
 ```
 

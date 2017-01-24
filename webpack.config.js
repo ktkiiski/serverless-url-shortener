@@ -82,6 +82,18 @@ module.exports = {
                     pretty: debug,
                 },
             },
+            // Convert any Markdown files to HTML, and require any referred images/stylesheet
+            {
+                test: /\.(md|markdown)$/,
+                use: [{
+                    loader: 'html-loader',
+                    options: {
+                        attrs: ["img:src", "link:href"],
+                    },
+                }, {
+                    loader: 'markdown-loader',
+                }],
+            },
             // Optimize image files and save them as files
             {
                 test: /\.(gif|png|jpe?g|svg)$/,
