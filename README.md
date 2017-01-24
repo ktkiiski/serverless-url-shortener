@@ -1,4 +1,6 @@
-# Webpack 2 + TypeScript + SASS boilerplate
+# Broilerplate
+
+![Broilerplate](./src/images/broilerplate.png)
 
 This is a boilerplate for creating projects that use Webpack 2 to compile a TypeScript application and SASS stylesheets into a ES5 JavaScript and CSS.
 
