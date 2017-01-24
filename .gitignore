@@ -6,3 +6,6 @@
 
 # Built files
 /dist
+
+# Ignore OS X hidden files
+.DS_Store
