@@ -6,6 +6,9 @@ const _ = require("lodash");
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
+// Read the website configuration
+const websiteConfig = require("./website.config.js");
+
 // Read the TypeScript configuration and use it
 const tsconfigPath = path.resolve(__dirname, "tsconfig.json");
 const tsconfig = JSON.parse(fs.readFileSync(tsconfigPath, "utf8"));
@@ -19,6 +22,17 @@ const entryPaths = tsconfig.files.map(file => path.resolve(__dirname, file));
 const sourceDirPaths = _.uniq(entryPaths.map(filePath => path.dirname(filePath)));
 const buildDirPath = path.resolve(__dirname, tsconfig.compilerOptions.outDir);
 const modulesDirPath = path.resolve(__dirname, "node_modules");
+
+// Create HTML plugins for each webpage
+const htmlPlugins = websiteConfig.map(
+    ({file}) => new HtmlWebpackPlugin({
+        filename: path.relative("src", path.format(_.assign(_.pick(path.parse(file), 'dir', 'name'), {ext: ".html"}))),
+        template: file,
+        chunks: ['app'],
+        inject: true,
+        hash: !debug,
+    })
+);
 
 /**
  * The Webpack 2 configuration. The options are documented at
@@ -139,12 +153,5 @@ module.exports = {
     // Plugins
     plugins: [
         new ExtractTextPlugin("[name].css"),
-        new HtmlWebpackPlugin({
-            filename: "index.html",
-            template: "src/index.pug",
-            chunks: ['app'],
-            inject: true,
-            hash: !debug,
-        }),
-    ],
+    ].concat(htmlPlugins),
 };
