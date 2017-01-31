@@ -115,7 +115,7 @@ module.exports = {
                     loader: 'image-webpack-loader',
                     options: {
                         progressive: true,
-                        optimizationLevel: 7,
+                        optimizationLevel: debug ? 0 : 7,
                         interlaced: false,
                     },
                 }],
