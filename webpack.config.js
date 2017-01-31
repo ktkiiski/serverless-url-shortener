@@ -29,8 +29,10 @@ const htmlPlugins = websiteConfig.map(
         filename: path.relative("src", path.format(_.assign(_.pick(path.parse(file), 'dir', 'name'), {ext: ".html"}))),
         template: file,
         chunks: ['app'],
+        // Insert tags for stylesheets and scripts
         inject: true,
-        hash: !debug,
+        // No cache-busting needed, because hash is included in file names
+        hash: false,
     })
 );
 
@@ -49,7 +51,7 @@ module.exports = {
         // Output files are place to this folder
         path: buildDirPath,
         // The file name template for the entry chunks
-        filename: "app.js",
+        filename: debug ? "[name].js" : "[name].[hash].js",
         // The URL to the output directory resolved relative to the HTML page
         publicPath: "/",
         // The name of the exported library, e.g. the global variable name
@@ -152,6 +154,6 @@ module.exports = {
 
     // Plugins
     plugins: [
-        new ExtractTextPlugin("[name].css"),
+        new ExtractTextPlugin(debug ? "[name].css" : "[name].[hash].css"),
     ].concat(htmlPlugins),
 };
