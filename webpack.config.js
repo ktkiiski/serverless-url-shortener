@@ -82,14 +82,6 @@ module.exports = {
                     { loader: "sass-loader" },
                 ]),
             },
-            // Ensure that any images references in HTML files are included
-            {
-                test: /\.html?$/,
-                loader: 'html-loader',
-                options: {
-                    attrs: ["img:src", "link:href"],
-                },
-            },
             // Convert any Pug (previously "Jade") templates to HTML
             {
                 test: /\.pug$/,
@@ -98,17 +90,18 @@ module.exports = {
                     pretty: debug,
                 },
             },
+            // Ensure that any images references in HTML files are included
+            {
+                test: /\.(md|markdown|html?)$/,
+                loader: 'html-loader',
+                options: {
+                    attrs: ["img:src", "link:href"],
+                },
+            },
             // Convert any Markdown files to HTML, and require any referred images/stylesheet
             {
                 test: /\.(md|markdown)$/,
-                use: [{
-                    loader: 'html-loader',
-                    options: {
-                        attrs: ["img:src", "link:href"],
-                    },
-                }, {
-                    loader: 'markdown-loader',
-                }],
+                loader: 'markdown-loader',
             },
             // Optimize image files and save them as files
             {
