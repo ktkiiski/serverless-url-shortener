@@ -1,6 +1,7 @@
+const _ = require("lodash");
 const fs = require("fs");
 const path = require("path");
-const _ = require("lodash");
+const webpack = require("webpack");
 
 // Webpack plugins
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
@@ -22,6 +23,11 @@ const sourceDirPaths = _.uniq(entryPaths.map(filePath => path.dirname(filePath))
 const buildDirPath = path.resolve(__dirname, tsconfig.compilerOptions.outDir);
 const modulesDirPath = path.resolve(__dirname, "node_modules");
 
+// General plugins
+const corePlugins = [
+    new ExtractTextPlugin(debug ? "[name].css" : "[name].[hash].css"),
+];
+
 // Create HTML plugins for each webpage
 const htmlPlugins = websiteConfig.map(
     ({file}) => new HtmlWebpackPlugin({
@@ -34,6 +40,15 @@ const htmlPlugins = websiteConfig.map(
         hash: false,
     })
 );
+
+// If building for the production, minimize the JavaScript
+const compressPlugins = debug ? [] : [
+    new webpack.optimize.UglifyJsPlugin({
+        compress: {
+            warnings: false,
+        },
+    }),
+];
 
 /**
  * The Webpack 2 configuration. The options are documented at
@@ -145,7 +160,5 @@ module.exports = {
     },
 
     // Plugins
-    plugins: [
-        new ExtractTextPlugin(debug ? "[name].css" : "[name].[hash].css"),
-    ].concat(htmlPlugins),
+    plugins: corePlugins.concat(htmlPlugins, compressPlugins),
 };
