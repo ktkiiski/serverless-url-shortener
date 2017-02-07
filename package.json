@@ -5,9 +5,9 @@
     "start": "gulp serve",
     "clean": "gulp clean",
     "build": "gulp build",
-    "build:dev": "NODE_ENV=dev gulp build",
+    "build:dev": "NODE_ENV=development gulp build",
     "build:prod": "NODE_ENV=production gulp build",
-    "watch": "NODE_ENV=dev gulp watch",
+    "watch": "NODE_ENV=development gulp watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {},

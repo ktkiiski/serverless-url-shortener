@@ -14,8 +14,7 @@ const tsconfigPath = path.resolve(__dirname, "tsconfig.json");
 const tsconfig = JSON.parse(fs.readFileSync(tsconfigPath, "utf8"));
 
 // Read configuration from environment variables
-const nodeEnv = process.env.NODE_ENV || "dev";
-const debug = nodeEnv === "dev";
+const debug = process.env.NODE_ENV !== "production";
 
 // Resolve modules, source, build and static paths
 const entryPaths = tsconfig.files.map(file => path.resolve(__dirname, file));
