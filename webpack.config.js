@@ -92,8 +92,19 @@ module.exports = {
                 test: /\.scss$/,
                 // Extract to separate stylesheet file from the main bundle
                 loader: ExtractTextPlugin.extract([
-                    { loader: "css-loader" },
-                    { loader: "sass-loader" },
+                    {
+                        loader: "css-loader",
+                        options: {
+                            sourceMap: true,
+                        },
+                    },
+                    {
+                        loader: "sass-loader",
+                        options: {
+                            sourceMap: true,
+                            outputStyle: debug ? 'nested' : 'compressed',
+                        },
+                    },
                 ]),
             },
             // Convert any Pug (previously "Jade") templates to HTML
