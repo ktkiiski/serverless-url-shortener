@@ -25,7 +25,10 @@ const modulesDirPath = path.resolve(__dirname, "node_modules");
 
 // General plugins
 const corePlugins = [
-    new ExtractTextPlugin(debug ? "[name].css" : "[name].[hash].css"),
+    new ExtractTextPlugin({
+        disable: debug,
+        filename: debug ? "[name].css" : "[name].[hash].css",
+    }),
 ];
 
 // Create HTML plugins for each webpage
@@ -91,21 +94,22 @@ module.exports = {
             {
                 test: /\.scss$/,
                 // Extract to separate stylesheet file from the main bundle
-                loader: ExtractTextPlugin.extract([
-                    {
+                loader: ExtractTextPlugin.extract({
+                    use: [{
                         loader: "css-loader",
                         options: {
                             sourceMap: true,
                         },
-                    },
-                    {
+                    }, {
                         loader: "sass-loader",
                         options: {
-                            sourceMap: true,
                             outputStyle: debug ? 'nested' : 'compressed',
+                            sourceMap: true,
+                            sourceMapContents: true,
                         },
-                    },
-                ]),
+                    }],
+                    fallback: 'style-loader',
+                }),
             },
             // Convert any Pug (previously "Jade") templates to HTML
             {
@@ -156,7 +160,7 @@ module.exports = {
     },
 
     // When developing, enable sourcemaps for debugging webpack's output.
-    devtool: debug ? "cheap-eval-source-map" : "hidden-source-map",
+    devtool: debug ? "cheap-eval-source-map" : "source-map",
 
     // Configuration for webpack-dev-server
     devServer: {
