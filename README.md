@@ -58,3 +58,32 @@ To build for production:
 ```bash
 npm run build:prod
 ```
+
+## Deploy
+
+To deploy the static website to Amazon S3, you first need to set up your Amazon S3 credentials.
+This can be done with [`aws-cli` command line tool](https://github.com/aws/aws-cli):
+
+```bash
+# Install if not already installed
+pip install awscli
+# Optional: enable command line completion
+complete -C aws_completer aws
+# Configure your credentials
+aws configure
+```
+
+You also need to create the [Amazon S3 **bucket** and configure it for the static website](http://docs.aws.amazon.com/gettingstarted/latest/swh/getting-started-hosting-your-website.html).
+The bucket name must be configured in the [`website.config.js`](./website.config.js).
+
+You can deploy the production version of your static website:
+
+```bash
+npm run deploy
+```
+
+**NOTE:** This will clean the build directory (`dist`), removing its contents, build your app with the production version, and then upload it to S3.
+
+The assets (JavaScript, CSS, images) are uploaded first. Their names will contain hashes, so they won't conflict with existing files.
+They will be cached infinitely with HTTP headers.
+The HTML files are uploaded last and they are cached for a short time.

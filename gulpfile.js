@@ -5,6 +5,14 @@ const _ = require("lodash");
 const webpack = require("webpack");
 const WebpackDevServer = require("webpack-dev-server");
 const webpackConfig = require("./webpack.config.js");
+const websiteConfig = require("./website.config.js");
+const s3 = require("gulp-s3-upload")({ signatureVersion: 'v4' });
+const AWS = require("aws-sdk");
+
+// Static assets are cached for a year
+const staticAssetsCacheDuration = 31556926;
+// HTML pages are cached for an hour
+const staticHtmlCacheDuration = 3600;
 
 /**
  * Clean the build folder.
@@ -25,7 +33,7 @@ gulp.task("watch", ["build"], () => {
  * Build the JavaScript and stylesheet assets by
  * using the Webpack 2.
  */
-gulp.task("build", callback => {
+gulp.task("build", ["clean"], callback => {
     webpack(webpackConfig).run((err, stats) => {
         if (err) {
             throw new gutil.PluginError("build", err);
@@ -55,6 +63,33 @@ gulp.task("serve", callback => {
         gutil.log("[serve]", url);
     });
 });
+
+/**
+ * Upload the static assets to Amazon S3.
+ */
+gulp.task("deploy:assets", ["build"], () =>
+    gulp.src(["dist/**/*", "!dist/**/*.html"]).pipe(s3({
+        Bucket: websiteConfig.bucket,
+        ACL: 'public-read',
+        CacheControl: `max-age=${staticAssetsCacheDuration}`,
+    }))
+);
+
+/**
+ * Upload the HTML files to Amazon S3.
+ */
+gulp.task("deploy:html", ["deploy:assets"], () =>
+    gulp.src(["dist/**/*.html"]).pipe(s3({
+        Bucket: websiteConfig.bucket,
+        ACL: 'public-read',
+        CacheControl: `max-age=${staticHtmlCacheDuration}`,
+    }))
+);
+
+/**
+ * Deploy the static website to Amazon S3.
+ */
+gulp.task("deploy", ["deploy:html"]);
 
 // By default run the webpack-dev-server
 gulp.task("default", ["serve"]);

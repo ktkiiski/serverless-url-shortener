@@ -7,6 +7,7 @@
     "build": "gulp build",
     "build:dev": "NODE_ENV=development gulp build",
     "build:prod": "NODE_ENV=production gulp build",
+    "deploy": "NODE_ENV=production gulp deploy",
     "watch": "NODE_ENV=development gulp watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
