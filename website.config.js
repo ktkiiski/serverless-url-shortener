@@ -8,5 +8,7 @@ module.exports = {
     // Web page configuration
     pages: [{
         file: "src/index.pug",
+    }, {
+        file: "src/error.pug",
     }],
 };
