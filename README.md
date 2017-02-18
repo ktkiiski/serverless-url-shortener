@@ -87,3 +87,8 @@ npm run deploy
 The assets (JavaScript, CSS, images) are uploaded first. Their names will contain hashes, so they won't conflict with existing files.
 They will be cached infinitely with HTTP headers.
 The HTML files are uploaded last and they are cached for a short time.
+
+
+## Upgrade packages
+
+Pro-tip: Use [`npm-check-updates`](https://github.com/tjunnone/npm-check-updates) command line utility to upgrade the npm packages.
