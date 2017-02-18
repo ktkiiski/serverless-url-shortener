@@ -1,8 +1,2 @@
 /* Write your styles here! */
-body {
-    background: #fcfcfc;
-    .container {
-        width: 800px;
-        margin: 0 auto;
-    }
-}
+@import "~bootstrap/scss/bootstrap";
