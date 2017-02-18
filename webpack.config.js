@@ -33,7 +33,8 @@ const corePlugins = [
 
 // Create HTML plugins for each webpage
 const htmlPlugins = websiteConfig.pages.map(
-    ({file}) => new HtmlWebpackPlugin({
+    ({file, title}) => new HtmlWebpackPlugin({
+        title: title,
         filename: path.relative("src", path.format(_.assign(_.pick(path.parse(file), 'dir', 'name'), {ext: ".html"}))),
         template: file,
         chunks: ['app'],

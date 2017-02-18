@@ -7,8 +7,10 @@ module.exports = {
     bucket: "broilerplate",
     // Web page configuration
     pages: [{
+        title: "Broilerplate",
         file: "src/index.pug",
     }, {
+        title: "Page not found!",
         file: "src/error.pug",
     }],
 };
