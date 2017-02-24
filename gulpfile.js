@@ -6,7 +6,6 @@ const webpack = require("webpack");
 const WebpackDevServer = require("webpack-dev-server");
 const webpackConfig = require("./webpack.config.js");
 const websiteConfig = require("./website.config.js");
-const ghpages = require('gh-pages');
 const s3 = require("gulp-s3-upload")({ signatureVersion: 'v4' });
 const AWS = require("aws-sdk");
 
@@ -68,7 +67,7 @@ gulp.task("serve", callback => {
 /**
  * Upload the static assets to Amazon S3.
  */
-gulp.task("deploy:s3:assets", ["build"], () =>
+gulp.task("deploy:assets", ["build"], () =>
     gulp.src(["dist/**/*", "!dist/**/*.html"]).pipe(s3({
         Bucket: websiteConfig.bucket,
         ACL: 'public-read',
@@ -79,7 +78,7 @@ gulp.task("deploy:s3:assets", ["build"], () =>
 /**
  * Upload the HTML files to Amazon S3.
  */
-gulp.task("deploy:s3:html", ["deploy:s3:assets"], () =>
+gulp.task("deploy:html", ["deploy:assets"], () =>
     gulp.src(["dist/**/*.html"]).pipe(s3({
         Bucket: websiteConfig.bucket,
         ACL: 'public-read',
@@ -90,19 +89,7 @@ gulp.task("deploy:s3:html", ["deploy:s3:assets"], () =>
 /**
  * Deploy the static website to Amazon S3.
  */
-gulp.task("deploy:s3", ["deploy:s3:html"]);
-
-/**
- * Deploy the static website to GitHub pages.
- */
-gulp.task("deploy:ghpages", ["build"], complete => {
-    ghpages.publish("dist", {
-        remote: 'template',
-        message: "Auto-generated commit",
-        push: true,
-        logger: message => console.log(message),
-    }, complete);
-});
+gulp.task("deploy", ["deploy:html"]);
 
 // By default run the webpack-dev-server
 gulp.task("default", ["serve"]);
