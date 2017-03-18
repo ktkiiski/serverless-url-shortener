@@ -1,4 +1,7 @@
 import './index.scss';
 
 // Write your code here!
-console.log("Hello world!");
+
+const element = document.createElement("div");
+element.innerHTML = require<string>('./example.tmpl');
+document.body.appendChild(element);

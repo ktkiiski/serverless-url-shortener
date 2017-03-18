@@ -11,7 +11,7 @@
         "target": "es5",
         "jsx": "react"
     },
-    "files": [
-        "./src/index.ts"
+    "include": [
+        "./src"
     ]
 }

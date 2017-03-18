@@ -8,6 +8,8 @@
         "quotemark": [
             false
         ],
+        "no-require-imports": false,
+        "no-var-requires": false,
         "object-literal-sort-keys": false
     },
     "jsRules": {

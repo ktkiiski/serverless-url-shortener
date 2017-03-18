@@ -18,7 +18,7 @@ const tsconfig = JSON.parse(fs.readFileSync(tsconfigPath, "utf8"));
 const debug = process.env.NODE_ENV !== "production";
 
 // Resolve modules, source, build and static paths
-const entryPaths = tsconfig.files.map(file => path.resolve(__dirname, file));
+const entryPaths = [path.resolve(__dirname, "./src/index.ts")];
 const sourceDirPaths = _.uniq(entryPaths.map(filePath => path.dirname(filePath)));
 const buildDirPath = path.resolve(__dirname, tsconfig.compilerOptions.outDir);
 const modulesDirPath = path.resolve(__dirname, "node_modules");
@@ -122,7 +122,7 @@ module.exports = {
             },
             // Ensure that any images references in HTML files are included
             {
-                test: /\.(md|markdown|html?)$/,
+                test: /\.(md|markdown|html?|tmpl)$/,
                 loader: 'html-loader',
                 options: {
                     attrs: ["img:src", "link:href"],
