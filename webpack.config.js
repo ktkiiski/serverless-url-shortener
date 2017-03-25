@@ -150,13 +150,16 @@ module.exports = (env = process.env) => {
                     test: /\.(md|markdown)$/,
                     loader: 'markdown-loader',
                 },
-                // Optimize image files and save them as files
+                // Optimize image files and bundle them as files or data URIs
                 {
                     test: /\.(gif|png|jpe?g|svg)$/,
                     use: [{
-                        loader: 'file-loader',
+                        loader: 'url-loader',
                         options: {
-                            name: "images/[name].[hash].[ext]",
+                            // Max bytes to be converted to inline data URI
+                            limit: 100,
+                            // If larger, then convert to a file instead
+                            name: 'images/[name].[hash].[ext]',
                         },
                     }, {
                         loader: 'image-webpack-loader',
@@ -168,6 +171,17 @@ module.exports = (env = process.env) => {
                         },
                     }],
                 },
+                // Include font files either as data URIs or separate files
+                {
+                    test: /\.(eot|ttf|otf|woff2?|svg)($|\?|#)/,
+                    loader: 'url-loader',
+                    options: {
+                        // Max bytes to be converted to inline data URI
+                        limit: 100,
+                        // If larger, then convert to a file instead
+                        name: 'fonts/[name].[hash].[ext]',
+                    }
+                }
             ],
         },
 
