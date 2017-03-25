@@ -15,8 +15,8 @@ const tsconfigPath = path.resolve(__dirname, "tsconfig.json");
 const tsconfig = JSON.parse(fs.readFileSync(tsconfigPath, "utf8"));
 
 // Resolve modules, source, build and static paths
-const entryPaths = [path.resolve(__dirname, "./src/index.ts")];
-const sourceDirPaths = _.uniq(entryPaths.map(filePath => path.dirname(filePath)));
+const sourceDirPath = path.resolve(__dirname, websiteConfig.sourceDir);
+const scripts = _.union(..._.map(websiteConfig.pages, page => page.scripts));
 const buildDirPath = path.resolve(__dirname, tsconfig.compilerOptions.outDir);
 const modulesDirPath = path.resolve(__dirname, "node_modules");
 
@@ -26,7 +26,7 @@ const modulesDirPath = path.resolve(__dirname, "node_modules");
  * https://webpack.js.org/configuration/
  */
 module.exports = (env = process.env) => {
-    const config = Object.assign({}, env, process.env);
+    const config = _.assign({}, env, process.env);
     // Read configuration from environment variables
     const devServerHost = config.HOST || '0.0.0.0';
     const devServerPort = config.PORT || 1111;
@@ -42,11 +42,11 @@ module.exports = (env = process.env) => {
         }),
         // Create HTML plugins for each webpage
         ...websiteConfig.pages.map(
-            ({file, title}) => new HtmlWebpackPlugin({
+            ({file, title, scripts}) => new HtmlWebpackPlugin({
                 title: title,
-                filename: path.relative("src", path.format(_.assign(_.pick(path.parse(file), 'dir', 'name'), {ext: ".html"}))),
-                template: file,
-                chunks: ['app'],
+                filename: path.format(_.assign(_.pick(path.parse(file), 'dir', 'name'), {ext: ".html"})),
+                template: path.resolve(sourceDirPath, file),
+                chunks: scripts.map(name => path.basename(name)),
                 // Insert tags for stylesheets and scripts
                 inject: true,
                 // No cache-busting needed, because hash is included in file names
@@ -65,11 +65,10 @@ module.exports = (env = process.env) => {
         );
     }
     return {
-        entry: {
-            // The main entry point source files.
-            // These are determined from the tsconfig.json file
-            app: entryPaths,
-        },
+        // The main entry points for source files.
+        entry: _.fromPairs(
+            scripts.map(entry => [path.basename(entry), [path.resolve(sourceDirPath, entry)]])
+        ),
 
         output: {
             // Output files are place to this folder
@@ -191,7 +190,10 @@ module.exports = (env = process.env) => {
 
         resolve: {
             // Look import modules from these directories
-            modules: sourceDirPaths.concat([modulesDirPath]),
+            modules: [
+                sourceDirPath,
+                modulesDirPath,
+            ],
             // Add '.ts' and '.tsx' as resolvable extensions.
             extensions: [".ts", ".tsx", ".js"],
         },

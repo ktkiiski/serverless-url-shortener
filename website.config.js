@@ -4,13 +4,17 @@
  */
 module.exports = {
     // Amazon S3 bucket to which the static website is deployed
-    bucket: "broilerplate",
+    bucket: 'broilerplate',
+    // The source folder
+    sourceDir: 'src',
     // Web page configuration
     pages: [{
-        title: "Broilerplate",
-        file: "src/index.pug",
+        title: 'Broilerplate',
+        file: 'index.pug',
+        scripts: ['index.ts'],
     }, {
-        title: "Page not found!",
-        file: "src/error.pug",
+        title: 'Page not found!',
+        file: 'error.pug',
+        scripts: ['index.ts'],
     }],
 };
