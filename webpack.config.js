@@ -84,7 +84,7 @@ module.exports = (env = process.env) => {
             rules: [
                 // Pre-process sourcemaps for JavaScript files ('.js')
                 {
-                    test: /\.js$/,
+                    test: /\.(js|tsx?)$/,
                     loader: "source-map-loader",
                     enforce: "pre",
                 },
