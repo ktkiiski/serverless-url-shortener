@@ -5,7 +5,7 @@ const _ = require("lodash");
 const webpack = require("webpack");
 const WebpackDevServer = require("webpack-dev-server");
 const createWebpackConfig = require("./webpack.config.js");
-const websiteConfig = require("./website.config.js");
+const siteConfig = require("./site.config.js");
 const s3 = require("gulp-s3-upload")({ signatureVersion: 'v4' });
 const AWS = require("aws-sdk");
 
@@ -71,7 +71,7 @@ gulp.task("serve", callback => {
  */
 gulp.task("deploy:assets", ["build"], () =>
     gulp.src(["dist/**/*", "!dist/**/*.html"]).pipe(s3({
-        Bucket: websiteConfig.bucket,
+        Bucket: siteConfig.bucket,
         ACL: 'public-read',
         CacheControl: `max-age=${staticAssetsCacheDuration}`,
     }))
@@ -82,7 +82,7 @@ gulp.task("deploy:assets", ["build"], () =>
  */
 gulp.task("deploy:html", ["deploy:assets"], () =>
     gulp.src(["dist/**/*.html"]).pipe(s3({
-        Bucket: websiteConfig.bucket,
+        Bucket: siteConfig.bucket,
         ACL: 'public-read',
         CacheControl: `max-age=${staticHtmlCacheDuration}`,
     }))

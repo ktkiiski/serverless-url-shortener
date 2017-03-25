@@ -8,15 +8,15 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 // Read the website configuration
-const websiteConfig = require('./website.config.js');
+const siteConfig = require('./site.config.js');
 
 // Read the TypeScript configuration and use it
 const tsconfigPath = path.resolve(__dirname, 'tsconfig.json');
 const tsconfig = JSON.parse(fs.readFileSync(tsconfigPath, 'utf8'));
 
 // Resolve modules, source, build and static paths
-const sourceDirPath = path.resolve(__dirname, websiteConfig.sourceDir);
-const scripts = _.union(..._.map(websiteConfig.pages, page => page.scripts));
+const sourceDirPath = path.resolve(__dirname, siteConfig.sourceDir);
+const scripts = _.union(..._.map(siteConfig.pages, page => page.scripts));
 const buildDirPath = path.resolve(__dirname, tsconfig.compilerOptions.outDir);
 const modulesDirPath = path.resolve(__dirname, 'node_modules');
 
@@ -41,7 +41,7 @@ module.exports = (env = process.env) => {
             filename: debug ? '[name].css' : '[name].[hash].css',
         }),
         // Create HTML plugins for each webpage
-        ...websiteConfig.pages.map(
+        ...siteConfig.pages.map(
             ({file, title, scripts}) => new HtmlWebpackPlugin({
                 title: title,
                 filename: path.format(_.assign(_.pick(path.parse(file), 'dir', 'name'), {ext: '.html'})),
