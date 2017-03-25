@@ -14,7 +14,7 @@
   "dependencies": {},
   "devDependencies": {
     "bootstrap": "4.0.0-alpha.6",
-    "css-loader": "0.26.2",
+    "css-loader": "0.27.3",
     "del": "2.2.2",
     "extract-text-webpack-plugin": "2.1.0",
     "gulp": "3.9.1",
@@ -26,17 +26,17 @@
     "jstransformer-markdown-it": "2.0.0",
     "lodash": "4.17.4",
     "markdown-loader": "2.0.0",
-    "node-sass": "4.5.0",
+    "node-sass": "4.5.1",
     "pug": "2.0.0-beta6",
     "pug-loader": "2.3.0",
     "resolve-url-loader": "2.0.2",
-    "sass-loader": "6.0.2",
-    "source-map-loader": "0.1.6",
-    "style-loader": "0.13.2",
-    "ts-loader": "2.0.1",
+    "sass-loader": "6.0.3",
+    "source-map-loader": "0.2.0",
+    "style-loader": "0.16.0",
+    "ts-loader": "2.0.3",
     "typescript": "2.2.1",
     "url-loader": "0.5.8",
-    "webpack": "2.2.1",
-    "webpack-dev-server": "2.4.1"
+    "webpack": "2.3.2",
+    "webpack-dev-server": "2.4.2"
   }
 }
