@@ -26,9 +26,13 @@ const modulesDirPath = path.resolve(__dirname, "node_modules");
  * https://webpack.js.org/configuration/
  */
 module.exports = (env = process.env) => {
+    const config = Object.assign({}, env, process.env);
     // Read configuration from environment variables
-    const debug = env.NODE_ENV !== "production";
-    const devServer = env.devServer;
+    const devServerHost = config.HOST || '0.0.0.0';
+    const devServerPort = config.PORT || 1111;
+    const devServerBaseUrl = `http://${devServerHost}:${devServerPort}/`;
+    const debug = config.NODE_ENV !== "production";
+    const devServer = config.devServer;
     // Generate the plugins
     const plugins = [
         // Extract stylesheets to separate files in production
@@ -73,7 +77,7 @@ module.exports = (env = process.env) => {
             // The file name template for the entry chunks
             filename: debug ? "[name].js" : "[name].[hash].js",
             // The URL to the output directory resolved relative to the HTML page
-            publicPath: "/",
+            publicPath: devServer ? devServerBaseUrl : "/",
             // The name of the exported library, e.g. the global variable name
             library: "app",
             // How the library is exported? E.g. "var", "this"
