@@ -6,7 +6,8 @@
             "allow-null-check"
         ],
         "quotemark": [
-            false
+            true,
+            "single"
         ],
         "no-require-imports": false,
         "no-var-requires": false,
@@ -14,7 +15,8 @@
     },
     "jsRules": {
         "quotemark": [
-            false
+            true,
+            "single"
         ],
         "object-literal-sort-keys": false
     },

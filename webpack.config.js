@@ -1,24 +1,24 @@
-const _ = require("lodash");
-const fs = require("fs");
-const path = require("path");
-const webpack = require("webpack");
+const _ = require('lodash');
+const fs = require('fs');
+const path = require('path');
+const webpack = require('webpack');
 
 // Webpack plugins
-const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 // Read the website configuration
-const websiteConfig = require("./website.config.js");
+const websiteConfig = require('./website.config.js');
 
 // Read the TypeScript configuration and use it
-const tsconfigPath = path.resolve(__dirname, "tsconfig.json");
-const tsconfig = JSON.parse(fs.readFileSync(tsconfigPath, "utf8"));
+const tsconfigPath = path.resolve(__dirname, 'tsconfig.json');
+const tsconfig = JSON.parse(fs.readFileSync(tsconfigPath, 'utf8'));
 
 // Resolve modules, source, build and static paths
 const sourceDirPath = path.resolve(__dirname, websiteConfig.sourceDir);
 const scripts = _.union(..._.map(websiteConfig.pages, page => page.scripts));
 const buildDirPath = path.resolve(__dirname, tsconfig.compilerOptions.outDir);
-const modulesDirPath = path.resolve(__dirname, "node_modules");
+const modulesDirPath = path.resolve(__dirname, 'node_modules');
 
 /**
  * Creates the Webpack 2 configuration according to the
@@ -31,22 +31,22 @@ module.exports = (env = process.env) => {
     const devServerHost = config.HOST || '0.0.0.0';
     const devServerPort = config.PORT || 1111;
     const devServerBaseUrl = `http://${devServerHost}:${devServerPort}/`;
-    const debug = config.NODE_ENV !== "production";
+    const debug = config.NODE_ENV !== 'production';
     const devServer = config.devServer;
     // Generate the plugins
     const plugins = [
         // Extract stylesheets to separate files in production
         new ExtractTextPlugin({
             disable: devServer,
-            filename: debug ? "[name].css" : "[name].[hash].css",
+            filename: debug ? '[name].css' : '[name].[hash].css',
         }),
         // Create HTML plugins for each webpage
         ...websiteConfig.pages.map(
             ({file, title, scripts}) => new HtmlWebpackPlugin({
                 title: title,
-                filename: path.format(_.assign(_.pick(path.parse(file), 'dir', 'name'), {ext: ".html"})),
+                filename: path.format(_.assign(_.pick(path.parse(file), 'dir', 'name'), {ext: '.html'})),
                 template: path.resolve(sourceDirPath, file),
-                chunks: scripts.map(name => path.basename(name)),
+                chunks: scripts.map(name => path.basename(name).replace(/\..*?$/, '')),
                 // Insert tags for stylesheets and scripts
                 inject: true,
                 // No cache-busting needed, because hash is included in file names
@@ -67,20 +67,23 @@ module.exports = (env = process.env) => {
     return {
         // The main entry points for source files.
         entry: _.fromPairs(
-            scripts.map(entry => [path.basename(entry), [path.resolve(sourceDirPath, entry)]])
+            scripts.map(entry => [
+                path.basename(entry).replace(/\..*?$/, ''),
+                [path.resolve(sourceDirPath, entry)]
+            ])
         ),
 
         output: {
             // Output files are place to this folder
             path: buildDirPath,
             // The file name template for the entry chunks
-            filename: debug ? "[name].js" : "[name].[hash].js",
+            filename: debug ? '[name].js' : '[name].[hash].js',
             // The URL to the output directory resolved relative to the HTML page
-            publicPath: devServer ? devServerBaseUrl : "/",
+            publicPath: devServer ? devServerBaseUrl : '/',
             // The name of the exported library, e.g. the global variable name
-            library: "app",
-            // How the library is exported? E.g. "var", "this"
-            libraryTarget: "var",
+            library: 'app',
+            // How the library is exported? E.g. 'var', 'this'
+            libraryTarget: 'var',
         },
 
         module: {
@@ -88,20 +91,30 @@ module.exports = (env = process.env) => {
                 // Pre-process sourcemaps for JavaScript files ('.js')
                 {
                     test: /\.(js|tsx?)$/,
-                    loader: "source-map-loader",
-                    enforce: "pre",
+                    loader: 'source-map-loader',
+                    enforce: 'pre',
+                },
+                // Run tslint for the script files
+                {
+                    test: /\.(js|tsx?)$/,
+                    include: sourceDirPath,
+                    loader: 'tslint-loader',
+                    enforce: 'pre',
+                    options: {
+                        fix: true,
+                    },
                 },
                 // Compile TypeScript files ('.ts' or '.tsx')
                 {
                     test: /\.tsx?$/,
-                    loader: "ts-loader",
+                    loader: 'ts-loader',
                 },
                 // Extract CSS stylesheets from the main bundle
                 {
                     test: /\.(css|scss)($|\?)/,
                     loader: ExtractTextPlugin.extract({
                         use: [{
-                            loader: "css-loader",
+                            loader: 'css-loader',
                             options: {
                                 // For production, compress the CSS
                                 minimize: !debug,
@@ -111,7 +124,7 @@ module.exports = (env = process.env) => {
                             },
                         }, {
                             // Resolve relative url(...) references in the stylesheets
-                            loader: "resolve-url-loader",
+                            loader: 'resolve-url-loader',
                             options: {
                                 fail: true,
                                 sourceMap: true,
@@ -124,7 +137,7 @@ module.exports = (env = process.env) => {
                 {
                     test: /\.scss($|\?)/,
                     // Extract to separate stylesheet file from the main bundle
-                    loader: "sass-loader",
+                    loader: 'sass-loader',
                     options: {
                         outputStyle: 'nested',
                         // Source maps must be used in order to resolve-url-loader to work correctly!
@@ -132,7 +145,7 @@ module.exports = (env = process.env) => {
                         sourceMapContents: true,
                     },
                 },
-                // Convert any Pug (previously "Jade") templates to HTML
+                // Convert any Pug (previously 'Jade') templates to HTML
                 {
                     test: /\.pug$/,
                     loader: 'pug-loader',
@@ -145,7 +158,7 @@ module.exports = (env = process.env) => {
                     test: /\.(md|markdown|html?|tmpl)$/,
                     loader: 'html-loader',
                     options: {
-                        attrs: ["img:src", "link:href"],
+                        attrs: ['img:src', 'link:href'],
                     },
                 },
                 // Convert any Markdown files to HTML, and require any referred images/stylesheet
@@ -195,11 +208,11 @@ module.exports = (env = process.env) => {
                 modulesDirPath,
             ],
             // Add '.ts' and '.tsx' as resolvable extensions.
-            extensions: [".ts", ".tsx", ".js"],
+            extensions: ['.ts', '.tsx', '.js'],
         },
 
         // When developing, enable sourcemaps for debugging webpack's output.
-        devtool: debug ? "cheap-eval-source-map" : "source-map",
+        devtool: debug ? 'cheap-eval-source-map' : 'source-map',
 
         // Configuration for webpack-dev-server
         devServer: {
@@ -209,7 +222,7 @@ module.exports = (env = process.env) => {
             watchOptions: {
                 poll: 1000,
             },
-            host: process.env.HOST || "0.0.0.0",
+            host: process.env.HOST || '0.0.0.0',
             port: process.env.PORT || 1111,
         },
 
