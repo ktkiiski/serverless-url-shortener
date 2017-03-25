@@ -4,7 +4,7 @@ const del = require("del");
 const _ = require("lodash");
 const webpack = require("webpack");
 const WebpackDevServer = require("webpack-dev-server");
-const webpackConfig = require("./webpack.config.js");
+const createWebpackConfig = require("./webpack.config.js");
 const websiteConfig = require("./website.config.js");
 const s3 = require("gulp-s3-upload")({ signatureVersion: 'v4' });
 const AWS = require("aws-sdk");
@@ -34,6 +34,7 @@ gulp.task("watch", ["build"], () => {
  * using the Webpack 2.
  */
 gulp.task("build", ["clean"], callback => {
+    const webpackConfig = createWebpackConfig(process.env);
     webpack(webpackConfig).run((err, stats) => {
         if (err) {
             throw new gutil.PluginError("build", err);
@@ -49,6 +50,7 @@ gulp.task("build", ["clean"], callback => {
  * Serves and auto-reloads with webpack-dev-server.
  */
 gulp.task("serve", callback => {
+    const webpackConfig = createWebpackConfig(Object.assign({}, process.env, {devServer: true}));
     const serverConfig = webpackConfig.devServer;
     const host = serverConfig.host;
     const port = serverConfig.port;
