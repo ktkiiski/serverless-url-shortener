@@ -17,13 +17,28 @@ service: url-shortener # NOTE: update this with your service name
 # Check out our docs for more details
 frameworkVersion: ">=1.14.0 <1.15.0"
 
+# Custom configuration for the app
+custom:
+  domainName: kii.ski
+  stage: ${opt:stage, self:provider.stage}
+  bucketName: ${self:custom.domainName}-${self:custom.stage}
+
 provider:
   name: aws
   runtime: nodejs6.10
   region: eu-central-1
-#  stage: dev
 
-# you can add statements to the Lambda function's IAM Role here
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "s3:ListBucket"
+      Resource: "arn:aws:s3:::${self:custom.bucketName}"
+    - Effect: "Allow"
+      Action:
+        - "s3:GetObject"
+        - "s3:PutObject"
+      Resource: "arn:aws:s3:::${self:custom.bucketName}/*"
+
 #  iamRoleStatements:
 #    - Effect: "Allow"
 #      Action:
@@ -40,8 +55,9 @@ provider:
 #            - "/*"
 
 # you can define service wide environment variables here
-#  environment:
-#    variable1: value1
+  environment:
+    S3_BUCKET: ${self:custom.bucketName}
+    S3_REGION: ${self:provider.region}
 
 # you can add packaging information here
 #package:
@@ -53,7 +69,7 @@ provider:
 #    - exclude-me-dir/**
 
 functions:
-  hello:
+  shortenUrl:
     handler: handler.shortenUrl
     events:
       - http:
@@ -83,12 +99,16 @@ functions:
 #      variable2: value2
 
 # you can add CloudFormation resource templates here
-#resources:
-#  Resources:
-#    NewResource:
-#      Type: AWS::S3::Bucket
-#      Properties:
-#        BucketName: my-new-bucket
+resources:
+  Resources:
+    # S3 bucket for storing the URL resources
+    S3BucketForURLs:
+      Type: 'AWS::S3::Bucket'
+      DeletionPolicy: Delete
+      Properties:
+        BucketName: ${self:custom.bucketName}
+        WebsiteConfiguration:
+          IndexDocument: index.html
 #  Outputs:
 #     NewOutput:
 #       Description: "Description for the output"

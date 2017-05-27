@@ -11,7 +11,7 @@ const url = require('url');
 
 const S3_Bucket = process.env['S3_BUCKET'];
 const S3_Region = process.env['S3_REGION'];
-const S3_Prefix = process.env['S3_PREFIX'];
+const S3_Prefix = process.env['S3_PREFIX'] || '';
 
 
 // generate a 7 char shortid
