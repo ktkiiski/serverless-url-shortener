@@ -11,7 +11,7 @@ const url = require('url');
 
 const S3_Bucket = process.env['S3_BUCKET'];
 const S3_Region = process.env['S3_REGION'];
-const S3_Prefix = process.env['S3_PREFIX'] || '';
+const S3_Prefix = 'u';
 
 
 // generate a 7 char shortid
@@ -23,13 +23,15 @@ const shortid = () => {
 }
 
 exports.shortenUrl = (event, context, cb) => {
+    const {url_long} = JSON.parse(event.body);
     const s3 = new AWS.S3({ region: S3_Region });
-    const url_long = event.url_long;
-    const cdn_prefix = event.cdn_prefix;
     let retry = 0;    // try at most 3 times to create unique id
 
     const done = (url_short, error) => {
-        cb(null, { url_long: url_long, url_short: url_short, error: error });
+        cb(null, {
+            statusCode: error ? 400 : 200,
+            body: JSON.stringify({ url_long: url_long, url_short: url_short, error: error }),
+        });
     };
 
     const check_and_create_s3_redirect = (s3_bucket, key_short, url_long) => {
@@ -38,11 +40,17 @@ exports.shortenUrl = (event, context, cb) => {
                 // we should normall have a NotFound error showing that the id is not already in use
                 if (err.code === "NotFound") {
                     // normal execution path
-                    s3.putObject({ Bucket: s3_bucket, Key: key_short, Body: "", WebsiteRedirectLocation: url_long, ContentType: "text/plain" },
+                    s3.putObject({
+                        Bucket: s3_bucket,
+                        Key: key_short,
+                        Body: "",
+                        WebsiteRedirectLocation: url_long,
+                        ContentType: "text/plain",
+                    },
                         (err, data) => {
                             if (err) { done("", err.message); }
                             else {
-                                const ret_url = "https://" + cdn_prefix + "/" + id_short;
+                                const ret_url = "http://kii-ski-dev.s3-website.eu-central-1.amazonaws.com/u/" + id_short;
                                 console.log("Success, short_url = " + ret_url);
                                 done(ret_url, "");
                             }

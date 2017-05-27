@@ -21,7 +21,7 @@ frameworkVersion: ">=1.14.0 <1.15.0"
 custom:
   domainName: kii.ski
   stage: ${opt:stage, self:provider.stage}
-  bucketName: ${self:custom.domainName}-${self:custom.stage}
+  bucketName: kii-ski-${self:custom.stage}
 
 provider:
   name: aws
@@ -109,6 +109,19 @@ resources:
         BucketName: ${self:custom.bucketName}
         WebsiteConfiguration:
           IndexDocument: index.html
+    # Make contents of the bucket public for everyone
+    S3BucketPolicy:
+      Type: 'AWS::S3::BucketPolicy'
+      Properties:
+        Bucket: ${self:custom.bucketName}
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Sid: AddPerm
+              Effect: Allow
+              Principal: '*'
+              Action: 's3:GetObject'
+              Resource: "arn:aws:s3:::${self:custom.bucketName}/*"
 #  Outputs:
 #     NewOutput:
 #       Description: "Description for the output"
