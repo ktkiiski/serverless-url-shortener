@@ -22,6 +22,7 @@ custom:
   domainName: kii.ski
   stage: ${opt:stage, self:provider.stage}
   bucketName: kii-ski-${self:custom.stage}
+  bucketDomain: ${self:custom.bucketName}.s3-website.${self:provider.region}.amazonaws.com
 
 provider:
   name: aws
@@ -122,7 +123,76 @@ resources:
               Principal: '*'
               Action: 's3:GetObject'
               Resource: "arn:aws:s3:::${self:custom.bucketName}/*"
-#  Outputs:
-#     NewOutput:
-#       Description: "Description for the output"
-#       Value: "Some output value"
+    # CloudFront distribution used as a front end to the app
+    CloudFrontDistrib:
+      Type: 'AWS::CloudFront::Distribution'
+      Properties:
+        DistributionConfig:
+          Origins:
+            - DomainName: ${self:custom.bucketDomain}
+              Id: OriginRedirect
+              OriginPath: /u
+              CustomOriginConfig:
+                OriginProtocolPolicy: http-only
+            - DomainName: ${self:custom.bucketDomain}
+              Id: OriginAdmin
+              CustomOriginConfig:
+                OriginProtocolPolicy: http-only
+            - DomainName:
+                Fn::Join:
+                  - ''
+                  - - Ref: ShortenUrlLambdaFunction
+                    - '.execute-api.'
+                    - Ref: AWS::Region
+                    - '.amazonaws.com'
+              Id: OriginAPIGW
+              CustomOriginConfig:
+                OriginProtocolPolicy: match-viewer
+          Comment: >-
+            CloudFront distribution used as a front end to the URL shortener app
+          Enabled: true
+          DefaultCacheBehavior:
+            ForwardedValues:
+              QueryString: false
+            TargetOriginId: OriginRedirect
+            ViewerProtocolPolicy: redirect-to-https
+          CacheBehaviors:
+            - ForwardedValues:
+                QueryString: false
+              TargetOriginId: OriginAdmin
+              ViewerProtocolPolicy: redirect-to-https
+              PathPattern: /admin/*
+            - AllowedMethods:
+                - DELETE
+                - GET
+                - HEAD
+                - OPTIONS
+                - PATCH
+                - POST
+                - PUT
+              CachedMethods:
+                - GET
+                - HEAD
+                - OPTIONS
+              ForwardedValues:
+                Headers:
+                  - Origin
+                  - Referer
+                QueryString: false
+              TargetOriginId: OriginAPIGW
+              ViewerProtocolPolicy: https-only
+              PathPattern: /${self:custom.stage}/*
+
+  Outputs:
+    CloudFrontDomain:
+      Description: "CloudFront distribution domain name"
+      Value:
+        Fn::GetAtt: [ CloudFrontDistrib, DomainName ]
+    CloudFrontUrl:
+      Description: "CloudFront distribution domain name"
+      Value:
+        Fn::Join:
+          - ''
+          - - 'https://'
+            - Fn::GetAtt: [ CloudFrontDistrib, DomainName ]
+            - '/'
