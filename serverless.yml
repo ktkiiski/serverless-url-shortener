@@ -19,7 +19,7 @@ frameworkVersion: ">=1.14.0 <1.15.0"
 
 # Custom configuration for the app
 custom:
-  domainName: kii.ski
+  hostedZone: kii.ski
   stage: ${opt:stage, self:provider.stage}
   bucketName: kii-ski-${self:custom.stage}
   bucketDomain: ${self:custom.bucketName}.s3-website.${self:provider.region}.amazonaws.com
@@ -128,6 +128,8 @@ resources:
       Type: 'AWS::CloudFront::Distribution'
       Properties:
         DistributionConfig:
+          Aliases:
+            - ${self:custom.hostedZone}
           Origins:
             - DomainName: ${self:custom.bucketDomain}
               Id: OriginRedirect
@@ -155,12 +157,14 @@ resources:
             ForwardedValues:
               QueryString: false
             TargetOriginId: OriginRedirect
-            ViewerProtocolPolicy: redirect-to-https
+            # TODO: Set up certificate and use redirect-to-https instead
+            ViewerProtocolPolicy: allow-all
           CacheBehaviors:
             - ForwardedValues:
                 QueryString: false
               TargetOriginId: OriginAdmin
-              ViewerProtocolPolicy: redirect-to-https
+              # TODO: Set up certificate and use redirect-to-https instead
+              ViewerProtocolPolicy: allow-all
               PathPattern: /admin/*
             - AllowedMethods:
                 - DELETE
@@ -182,7 +186,19 @@ resources:
               TargetOriginId: OriginAPIGW
               ViewerProtocolPolicy: https-only
               PathPattern: /${self:custom.stage}/*
-
+    # Set up the DNS for the site
+    DNS:
+      Type: AWS::Route53::RecordSetGroup
+      Properties:
+        HostedZoneName: ${self:custom.hostedZone}.
+        Comment: Zone apex alias targeted to CloudFront.
+        RecordSets:
+        - Name: ${self:custom.hostedZone}.
+          Type: A
+          AliasTarget:
+            HostedZoneId: Z2FDTNDATAQYW2
+            DNSName:
+              Fn::GetAtt: [ CloudFrontDistrib, DomainName ]
   Outputs:
     CloudFrontDomain:
       Description: "CloudFront distribution domain name"
