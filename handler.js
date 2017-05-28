@@ -9,9 +9,10 @@ const url = require('url');
 
 // configuration to be customized
 
-const S3_Bucket = process.env['S3_BUCKET'];
-const S3_Region = process.env['S3_REGION'];
-const S3_Prefix = 'u';
+const domain = process.env['DOMAIN'];
+const s3Bucket = process.env['S3_BUCKET'];
+const s3Region = process.env['S3_REGION'];
+const s3Prefix = 'u/';
 
 
 // generate a 7 char shortid
@@ -23,8 +24,9 @@ const shortid = () => {
 }
 
 exports.shortenUrl = (event, context, cb) => {
-    const {url_long} = JSON.parse(event.body);
-    const s3 = new AWS.S3({ region: S3_Region });
+    const headers = event.headers;
+    const {url_long, key} = JSON.parse(event.body);
+    const s3 = new AWS.S3({ region: s3Region });
     let retry = 0;    // try at most 3 times to create unique id
 
     const done = (url_short, error) => {
@@ -50,7 +52,7 @@ exports.shortenUrl = (event, context, cb) => {
                         (err, data) => {
                             if (err) { done("", err.message); }
                             else {
-                                const ret_url = "http://kii-ski-dev.s3-website.eu-central-1.amazonaws.com/u/" + id_short;
+                                const ret_url = `http://${domain}/${id_short}`;
                                 console.log("Success, short_url = " + ret_url);
                                 done(ret_url, "");
                             }
@@ -77,8 +79,8 @@ exports.shortenUrl = (event, context, cb) => {
     if (!((url_check) && (url_check.host))) { return done("", "Invalid URL format"); }
 
     console.log("Long URL to shorten: " + url_long);
-    const id_short = shortid();
-    const key_short = S3_Prefix + "/" + id_short;
+    const id_short = key || shortid();
+    const key_short = `${s3Prefix}${id_short}`;
     console.log("Short id = " + key_short);
-    check_and_create_s3_redirect(S3_Bucket, key_short, url_long);
+    check_and_create_s3_redirect(s3Bucket, key_short, url_long);
 };

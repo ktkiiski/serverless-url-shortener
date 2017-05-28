@@ -59,6 +59,7 @@ provider:
   environment:
     S3_BUCKET: ${self:custom.bucketName}
     S3_REGION: ${self:provider.region}
+    DOMAIN: ${self:custom.hostedZone}
 
 # you can add packaging information here
 #package:
