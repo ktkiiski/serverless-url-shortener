@@ -126,14 +126,12 @@ resources:
             ForwardedValues:
               QueryString: false
             TargetOriginId: OriginRedirect
-            # TODO: Set up certificate and use redirect-to-https instead
             ViewerProtocolPolicy: allow-all
           CacheBehaviors:
             - ForwardedValues:
                 QueryString: false
               TargetOriginId: OriginAdmin
-              # TODO: Set up certificate and use redirect-to-https instead
-              ViewerProtocolPolicy: allow-all
+              ViewerProtocolPolicy: https-only
               PathPattern: /admin/*
             - AllowedMethods:
                 - DELETE
@@ -155,6 +153,10 @@ resources:
               TargetOriginId: OriginAPIGW
               ViewerProtocolPolicy: https-only
               PathPattern: /${self:custom.stage}/*
+          ViewerCertificate:
+            AcmCertificateArn:
+              Ref: DomainCertificate
+            SslSupportMethod: sni-only
     # Set up the DNS for the site
     DNS:
       Type: AWS::Route53::RecordSetGroup
@@ -168,6 +170,12 @@ resources:
             HostedZoneId: Z2FDTNDATAQYW2
             DNSName:
               Fn::GetAtt: [ CloudFrontDistrib, DomainName ]
+    # Certificate for the SSL
+    DomainCertificate:
+      Type: AWS::CertificateManager::Certificate
+      Properties:
+        DomainName: ${self:custom.stageDomain}
+
   Outputs:
     CloudFrontDomain:
       Description: "CloudFront distribution domain name"
