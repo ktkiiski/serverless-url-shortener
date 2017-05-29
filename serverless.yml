@@ -109,10 +109,8 @@ resources:
             - DomainName:
                 Fn::Join:
                   - ''
-                  - - Ref: ShortenUrlLambdaFunction
-                    - '.execute-api.'
-                    - Ref: AWS::Region
-                    - '.amazonaws.com'
+                  - - Ref: ApiGatewayRestApi
+                    - ".execute-api.${self:provider.region}.amazonaws.com"
               Id: OriginAPIGW
               CustomOriginConfig:
                 OriginProtocolPolicy: match-viewer
