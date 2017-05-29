@@ -1,27 +1,15 @@
-# Welcome to Serverless!
-#
-# This file is the main config file for your service.
-# It's very minimal at this point and uses default values.
-# You can always add more config options for more control.
-# We've included some commented out config examples here.
-# Just uncomment any of them to get that config option.
-#
-# For full config options, check the docs:
-#    docs.serverless.com
-#
-# Happy Coding!
+# Edit this according to your needs
+service: kii-ski
 
-service: url-shortener # NOTE: update this with your service name
-
-# You can pin your service to only deploy with a specific Serverless version
-# Check out our docs for more details
 frameworkVersion: ">=1.14.0 <1.15.0"
 
 # Custom configuration for the app
 custom:
+  # Edit this according to your needs
   hostedZone: kii.ski
+
   stage: ${opt:stage, self:provider.stage}
-  bucketName: kii-ski-${self:custom.stage}
+  bucketName: ${self:service}-${self:custom.stage}
   bucketDomain: ${self:custom.bucketName}.s3-website.${self:provider.region}.amazonaws.com
   # Custom domains for stages. If missing, we use the defaultStageDomain
   stageDomains:
