@@ -22,7 +22,7 @@ provider:
   runtime: nodejs6.10
   # NOTE: Certitificates won't work on other regions!
   region: us-east-1
-  stage: prod
+  stage: dev
 
   iamRoleStatements:
     - Effect: "Allow"
