@@ -32,7 +32,7 @@ exports.shortenUrl = (event, context, callback) => {
     let {longUrl, key} = JSON.parse(event.body);
     if (key) {
         // Remove all non-word characters
-        key = key.replace(/[^a-z0-9_]/ig, '');
+        key = key.replace(/[^a-z0-9_\.\-]/ig, '');
     } else {
         key = shortId();
     }

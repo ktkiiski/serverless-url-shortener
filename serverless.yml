@@ -74,6 +74,7 @@ resources:
       Properties:
         BucketName: ${self:custom.bucketName}
         WebsiteConfiguration:
+          # This does not matter as it cannot be reached
           IndexDocument: index.html
     # Make contents of the bucket public for everyone
     S3BucketPolicy:
