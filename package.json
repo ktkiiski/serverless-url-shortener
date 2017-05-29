@@ -2,7 +2,10 @@
   "name": "url-shortener",
   "version": "0.0.1",
   "private": true,
-  "scripts": {},
+  "scripts": {
+    "deploy:dev": "serverless deploy --stage=dev --verbose",
+    "deploy:prod": "serverless deploy --stage=prod --verbose"
+  },
   "dependencies": {},
   "devDependencies": {
     "serverless": "1.14.0"
