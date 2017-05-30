@@ -10,7 +10,14 @@ custom:
 
   stage: ${opt:stage, self:provider.stage}
   bucketName: ${self:service}-${self:custom.stage}
-  bucketDomain: ${self:custom.bucketName}.s3-website.${self:provider.region}.amazonaws.com
+  bucketDomain:
+    # Parse the domain from the website URL, such as http://xxxxx.s3-website-us-east-1.amazonaws.com/
+    # Split if with '/' character and pick the 3rd item (index = 2)
+    Fn::Select:
+      - 2
+      - Fn::Split:
+        - "/"
+        - Fn::GetAtt: [ S3BucketForURLs, WebsiteURL ]
   # Custom domains for stages. If missing, we use the defaultStageDomain
   stageDomains:
     prod: ${self:custom.hostedZone}
@@ -178,3 +185,6 @@ resources:
           - - 'https://'
             - Fn::GetAtt: [ CloudFrontDistrib, DomainName ]
             - '/'
+    S3BucketWebsiteDomain:
+      Description: "Domain of the hosted website of the S3 bucket"
+      Value: ${self:custom.bucketDomain}
