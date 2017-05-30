@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "deploy:dev": "serverless deploy --stage=dev --verbose",
-    "deploy:prod": "serverless deploy --stage=prod --verbose"
+    "deploy:prod": "serverless deploy --stage=prod --verbose",
+    "remove:dev": "serverless remove --stage=dev --verbose",
+    "remove:prod": "serverless remove --stage=prod --verbose"
   },
   "dependencies": {},
   "devDependencies": {
