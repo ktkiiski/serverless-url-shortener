@@ -1,6 +1,14 @@
-# package directories
-/node_modules
-/jspm_packages
-
 # Serverless directories
 .serverless
+
+# Ignore npm installed packages
+/node_modules
+
+# Ignore npm debug log file
+/npm-debug.log
+
+# Built files
+/dist
+
+# Ignore OS X hidden files
+.DS_Store

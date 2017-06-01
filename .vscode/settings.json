@@ -1,0 +1,8 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+    "files.associations": {
+        "*.tmpl": "html"
+    },
+    "html.format.endWithNewline": true,
+    "typescript.tsdk": "./node_modules/typescript/lib"
+}
