@@ -1,3 +1,23 @@
+# Serverless URL shortener
+
+Quickly set up your private URL shortener for your custom domain!
+The app is completely hosted on [Amazon Web Services](https://aws.amazon.com/).
+It is implemented with a low-cost "serverless" architecture.
+
+You can quickly deploy your own URL shortener with a single command! See the instructions below!
+
+The implementation is based on [the solution described in a blog by Stephan Hadinger](https://aws.amazon.com/blogs/compute/build-a-serverless-private-url-shortener/).
+
+The app is orchestrated with Amazon CloudFormation, composed by the [Serverless utility](https://serverless.com/). It utilizes the following web components:
+
+- **Amazon CloudFormation**: controls the orchestration of all the other services
+- **Amazon S3**: hosts the resources for redirection URLs
+- **Amazon Lambda**: executes the code for API calls, managing the resources on S3
+- **Amazon API Gateway**: forwards the API HTTP requests for Amazon Lambda for execution
+- **Amazon CloudFront**: acts as a front end for the API gateway and S3 buckets
+- **Amazon Certificate Manager**: provides the certificates for secure connections to your custom domain
+- **Amazon Route 53**: DNS management for your custom domain
+
 ## Prerequisities
 
 ### Set up AWS credentials
@@ -15,6 +35,10 @@ Edit the following attributes in the [`serverless.yml`](./serverless.yml) accord
 - `service`: A distinct name of your app. Recommended to be in lower case and separate words with dashes.
 - `custom.hostedZone`: This must be the apex domain matching the Hosted zone on your AWS Route53.
 
+You also need to install the node packages to your local development environment:
+
+    npm install
+
 ## Deployment
 
 Deploy the development version:
@@ -24,3 +48,6 @@ Deploy the development version:
 Deploy the production version:
 
     npm run deploy:prod
+
+**IMPORTANT:** When deploying for the first time, you will receive email for confirming the certificate for the domain names!
+The deployment continues only after you approve the certificate!
