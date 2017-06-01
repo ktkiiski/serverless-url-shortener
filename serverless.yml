@@ -23,6 +23,7 @@ custom:
     prod: ${self:custom.hostedZone}
   defaultStageDomain: "${self:custom.stage}.${self:custom.hostedZone}"
   stageDomain: ${self:custom.stageDomains.${self:custom.stage}, self:custom.defaultStageDomain}
+  apiDomain: "api.${self:custom.stageDomain}"
 
 provider:
   name: aws
@@ -65,7 +66,6 @@ functions:
           path: /urls
           method: post
 
-# you can add CloudFormation resource templates here
 resources:
   Resources:
     # S3 bucket for storing the URL resources
@@ -90,7 +90,50 @@ resources:
               Principal: '*'
               Action: 's3:GetObject'
               Resource: "arn:aws:s3:::${self:custom.bucketName}/*"
-    # CloudFront distribution used as a front end to the app
+    # CloudFront distribution for the API gateway
+    ApiCloudFrontDistrib:
+      Type: 'AWS::CloudFront::Distribution'
+      Properties:
+        DistributionConfig:
+          Aliases:
+            - ${self:custom.apiDomain}
+          Origins:
+            - DomainName:
+                Fn::Join:
+                  - ''
+                  - [{ Ref: ApiGatewayRestApi }, ".execute-api.${self:provider.region}.amazonaws.com" ]
+              OriginPath: /${self:custom.stage}
+              Id: OriginAPIGW
+              CustomOriginConfig:
+                OriginProtocolPolicy: match-viewer
+          Comment: >-
+            CloudFront distribution used as a front end to the URL shortener API gateway
+          Enabled: true
+          DefaultCacheBehavior:
+            AllowedMethods:
+              - DELETE
+              - GET
+              - HEAD
+              - OPTIONS
+              - PATCH
+              - POST
+              - PUT
+            CachedMethods:
+              - GET
+              - HEAD
+              - OPTIONS
+            ForwardedValues:
+              Headers:
+                - Origin
+                - Referer
+              QueryString: false
+            TargetOriginId: OriginAPIGW
+            ViewerProtocolPolicy: https-only
+          ViewerCertificate:
+            AcmCertificateArn:
+              Ref: DomainCertificate
+            SslSupportMethod: sni-only
+    # CloudFront distribution for the S3 website
     CloudFrontDistrib:
       Type: 'AWS::CloudFront::Distribution'
       Properties:
@@ -107,16 +150,8 @@ resources:
               Id: OriginAdmin
               CustomOriginConfig:
                 OriginProtocolPolicy: http-only
-            - DomainName:
-                Fn::Join:
-                  - ''
-                  - - Ref: ApiGatewayRestApi
-                    - ".execute-api.${self:provider.region}.amazonaws.com"
-              Id: OriginAPIGW
-              CustomOriginConfig:
-                OriginProtocolPolicy: match-viewer
           Comment: >-
-            CloudFront distribution used as a front end to the URL shortener app
+            CloudFront distribution used as a front end to the URL shortener S3 website
           Enabled: true
           DefaultCacheBehavior:
             ForwardedValues:
@@ -129,36 +164,29 @@ resources:
               TargetOriginId: OriginAdmin
               ViewerProtocolPolicy: https-only
               PathPattern: /admin/*
-            - AllowedMethods:
-                - DELETE
-                - GET
-                - HEAD
-                - OPTIONS
-                - PATCH
-                - POST
-                - PUT
-              CachedMethods:
-                - GET
-                - HEAD
-                - OPTIONS
-              ForwardedValues:
-                Headers:
-                  - Origin
-                  - Referer
-                QueryString: false
-              TargetOriginId: OriginAPIGW
-              ViewerProtocolPolicy: https-only
-              PathPattern: /${self:custom.stage}/*
           ViewerCertificate:
             AcmCertificateArn:
               Ref: DomainCertificate
             SslSupportMethod: sni-only
-    # Set up the DNS for the site
+    # Set up the DNS for the API
+    ApiDNS:
+      Type: AWS::Route53::RecordSetGroup
+      Properties:
+        HostedZoneName: ${self:custom.hostedZone}.
+        Comment: Domain for the CloudFront distribution mapped to the API
+        RecordSets:
+        - Name: ${self:custom.apiDomain}.
+          Type: A
+          AliasTarget:
+            HostedZoneId: Z2FDTNDATAQYW2
+            DNSName:
+              Fn::GetAtt: [ ApiCloudFrontDistrib, DomainName ]
+    # Set up the DNS for the S3 website
     DNS:
       Type: AWS::Route53::RecordSetGroup
       Properties:
         HostedZoneName: ${self:custom.hostedZone}.
-        Comment: Zone apex alias targeted to CloudFront.
+        Comment: Domain for the CloudFront distribution mapped to the S3 website.
         RecordSets:
         - Name: ${self:custom.stageDomain}.
           Type: A
@@ -171,20 +199,18 @@ resources:
       Type: AWS::CertificateManager::Certificate
       Properties:
         DomainName: ${self:custom.stageDomain}
+        SubjectAlternativeNames:
+          - ${self:custom.apiDomain}
 
   Outputs:
-    CloudFrontDomain:
-      Description: "CloudFront distribution domain name"
+    ApiCloudFrontDomain:
+      Description: "API CloudFront distribution domain name"
+      Value:
+        Fn::GetAtt: [ ApiCloudFrontDistrib, DomainName ]
+    WebsiteCloudFrontDomain:
+      Description: "Website CloudFront distribution domain name"
       Value:
         Fn::GetAtt: [ CloudFrontDistrib, DomainName ]
-    CloudFrontUrl:
-      Description: "CloudFront distribution domain name"
-      Value:
-        Fn::Join:
-          - ''
-          - - 'https://'
-            - Fn::GetAtt: [ CloudFrontDistrib, DomainName ]
-            - '/'
     S3BucketWebsiteDomain:
       Description: "Domain of the hosted website of the S3 bucket"
       Value: ${self:custom.bucketDomain}
