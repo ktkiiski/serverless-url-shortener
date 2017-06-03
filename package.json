@@ -35,6 +35,7 @@
     "source-map-loader": "0.2.0",
     "style-loader": "0.16.0",
     "ts-loader": "2.0.3",
+    "tslib": "1.7.1",
     "tslint": "4.5.1",
     "tslint-loader": "3.4.3",
     "typescript": "2.2.1",
