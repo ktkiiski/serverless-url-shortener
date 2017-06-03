@@ -7,13 +7,19 @@ const URL_REGEXP = /^(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|1
 
 interface IURLShortenerState {
     longUrl: string;
+    key: string;
     isSubmitEnabled: boolean;
+}
+
+function generateRandomKey(): string {
+    return 'xxxxxxx'.replace(/x/g, () => (Math.random() * 36 | 0).toString(36));
 }
 
 class URLShortenerForm extends React.Component<{}, IURLShortenerState> {
 
     public state: IURLShortenerState = {
         longUrl: '',
+        key: generateRandomKey(),
         isSubmitEnabled: false,
     };
 
@@ -22,15 +28,29 @@ class URLShortenerForm extends React.Component<{}, IURLShortenerState> {
     public render() {
         return (
             <form onSubmit={this.handleSubmit}>
-                <div className='form-group'>
-                    <label htmlFor={this.fieldId}>URL to be shortened</label>
-                    <input
-                        className='form-control'
-                        type='text'
-                        id={this.fieldId}
-                        placeholder='Enter URL'
-                        value={this.state.longUrl}
-                        onChange={this.handleChange} />
+                <div className='row'>
+                    <div className='form-group col-lg-6'>
+                        <label htmlFor={this.fieldId}>URL to be shortened</label>
+                        <input
+                            className='form-control'
+                            type='url'
+                            id={this.fieldId}
+                            placeholder='Enter URL'
+                            value={this.state.longUrl}
+                            onChange={this.handleLongUrlChange} />
+                    </div>
+                    <div className='form-group col-lg-6'>
+                        <label>Short URL</label>
+                        <div className='input-group'>
+                            <span className='input-group-addon'>https://kii.ski/</span>
+                            <input
+                                className='form-control'
+                                type='text'
+                                value={this.state.key}
+                                onChange={this.handleKeyChange}
+                                placeholder='Enter short key' />
+                        </div>
+                    </div>
                 </div>
                 <button
                     type='submit'
@@ -40,19 +60,30 @@ class URLShortenerForm extends React.Component<{}, IURLShortenerState> {
         );
     }
 
-    public handleChange = (event: React.FormEvent<HTMLInputElement>) => {
+    private handleLongUrlChange = (event: React.FormEvent<HTMLInputElement>) => {
         const longUrl = event.currentTarget.value;
+        this.updateState({longUrl});
+    }
+
+    private handleKeyChange = (event: React.FormEvent<HTMLInputElement>) => {
+        const key = event.currentTarget.value;
+        this.updateState({key});
+    }
+
+    private updateState(state: {[key: string]: any}) {
         this.setState((prevState) => {
+            const newState = {...prevState, ...state};
+            const {longUrl, key} = newState;
             return {
-                ...prevState, longUrl,
-                isSubmitEnabled: !!longUrl && URL_REGEXP.test(longUrl),
+                ...newState,
+                isSubmitEnabled: !!longUrl && !!key && URL_REGEXP.test(longUrl),
             };
         });
     }
 
-    public handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    private handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        alert(`Shorten URL ${this.state.longUrl}`);
+        alert(`Shorten URL ${this.state.longUrl} as https://kii.ski/${this.state.key}`);
     }
 }
 
