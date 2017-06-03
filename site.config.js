@@ -11,7 +11,7 @@ module.exports = {
     pages: [{
         title: 'URL shortener',
         file: 'admin/index.pug',
-        scripts: ['admin/admin.ts'],
+        scripts: ['admin/admin.tsx'],
     }, {
         title: 'Page not found!',
         file: 'error.pug',
