@@ -9,12 +9,12 @@ module.exports = {
     sourceDir: 'src',
     // Web page configuration
     pages: [{
-        title: 'Broilerplate',
-        file: 'index.pug',
-        scripts: ['index.ts'],
+        title: 'URL shortener',
+        file: 'admin/index.pug',
+        scripts: ['admin/admin.ts'],
     }, {
         title: 'Page not found!',
         file: 'error.pug',
-        scripts: ['index.ts'],
+        scripts: [],
     }],
 };
