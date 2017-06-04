@@ -3,6 +3,8 @@ import * as ReactDOM from 'react-dom';
 import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
 import './admin.scss';
 
+const SHORT_URL_PREFIX = `${window.location.protocol}//${window.location.host}/`;
+
 // tslint:disable:max-line-length
 const URL_REGEXP = /^(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})).?)(?::\d{2,5})?(?:[/?#]\S*)?$/i;
 
@@ -37,7 +39,7 @@ class URLShortenerForm extends React.Component<{}, IURLShortenerState> {
     private results$ = this.submission$$
         .concatMap((submission) => Observable.timer(1000).mapTo({
             ...submission,
-            shortUrl: `https://kii.ski/${submission.key}`,
+            shortUrl: `${SHORT_URL_PREFIX}${submission.key}`,
         } as IURLResult))
         .scan((results, result) => [...results, result], [])
     ;
@@ -83,7 +85,7 @@ class URLShortenerForm extends React.Component<{}, IURLShortenerState> {
                     <div className='form-group col-lg-6'>
                         <label>Short URL</label>
                         <div className='input-group'>
-                            <span className='input-group-addon'>https://kii.ski/</span>
+                            <span className='input-group-addon'>{SHORT_URL_PREFIX}</span>
                             <input
                                 className='form-control'
                                 type='text'
