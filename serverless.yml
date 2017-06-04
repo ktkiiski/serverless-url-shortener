@@ -1,12 +1,12 @@
 # Edit this according to your needs
-service: kii-ski
+service: ${file(./service.json):name}
 
 frameworkVersion: ">=1.14.0 <1.15.0"
 
 # Custom configuration for the app
 custom:
   # Edit this according to your needs
-  hostedZone: kii.ski
+  hostedZone: ${file(./service.json):hostedZone}
 
   stage: ${opt:stage, self:provider.stage}
   bucketName: ${self:service}-${self:custom.stage}

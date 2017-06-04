@@ -30,10 +30,10 @@ NOTE: You need to [create a Hosted Zone for Amazon Route53](http://docs.aws.amaz
 
 ## Setup
 
-Edit the following attributes in the [`serverless.yml`](./serverless.yml) according to your custom domain:
+Edit the following attributes in the [`service.json`](./service.json) according to your custom domain:
 
-- `service`: A distinct name of your app. Recommended to be in lower case and separate words with dashes.
-- `custom.hostedZone`: This must be the apex domain matching the Hosted zone on your AWS Route53.
+- `name`: A distinct name of your app. Recommended to be in lower case and separate words with dashes. This will become the name of the service in the Serverless configuration and it will be used in Amazon resource names.
+- `hostedZone`: This must be the apex (bare) domain matching the Hosted zone on your AWS Route53.
 
 You also need to install the node packages to your local development environment:
 
