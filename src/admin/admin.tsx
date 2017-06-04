@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import './admin.scss';
 
 // tslint:disable:max-line-length
@@ -17,13 +18,31 @@ function generateRandomKey(): string {
 
 class URLShortenerForm extends React.Component<{}, IURLShortenerState> {
 
-    public state: IURLShortenerState = {
-        longUrl: '',
-        key: generateRandomKey(),
-        isSubmitEnabled: false,
-    };
+    private longUrl$ = new BehaviorSubject('');
+    private key$ = new BehaviorSubject(generateRandomKey());
 
+    private state$ = Observable
+        .combineLatest(
+            this.longUrl$, this.key$,
+            (longUrl, key) => ({
+                longUrl, key,
+                isSubmitEnabled: !!longUrl && !!key && URL_REGEXP.test(longUrl),
+            } as IURLShortenerState),
+        )
+    ;
+
+    private subscription = new Subscription();
     private fieldId = `urlField_${Math.floor(Math.random() * 10000)}`;
+
+    public componentWillMount() {
+        this.subscription.add(this.state$.subscribe((state) => {
+            this.setState(state);
+        }));
+    }
+
+    public componentWillUnmount() {
+        this.subscription.unsubscribe();
+    }
 
     public render() {
         return (
