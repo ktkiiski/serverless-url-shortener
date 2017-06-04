@@ -26,10 +26,15 @@ function generateRandomKey(): string {
 
 class URLShortenerForm extends React.Component<{}, IURLShortenerState> {
 
-    private longUrl$ = new BehaviorSubject('');
-    private key$ = new BehaviorSubject(generateRandomKey());
-    private submission$ = new Subject<IURLSubmission>();
-    private results$ = this.submission$
+    private longUrl$$ = new BehaviorSubject('');
+    private key$$ = new BehaviorSubject(generateRandomKey());
+    private submission$$ = new Subject<IURLSubmission>();
+
+    private longUrl$ = this.longUrl$$.merge(this.submission$$.mapTo(''));
+    private key$ = this.key$$.merge(
+        this.submission$$.map(() => generateRandomKey()),
+    );
+    private results$ = this.submission$$
         .concatMap((submission) => Observable.timer(1000).mapTo({
             ...submission,
             shortUrl: `https://kii.ski/${submission.key}`,
@@ -127,7 +132,7 @@ class URLShortenerForm extends React.Component<{}, IURLShortenerState> {
     private handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const {longUrl, key} = this.state;
-        this.submission$.next({longUrl, key});
+        this.submission$$.next({longUrl, key});
     }
 }
 
