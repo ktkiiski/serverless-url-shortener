@@ -92,9 +92,13 @@ class URLShortenerForm extends React.Component<{}, IURLShortenerState> {
                     type='submit'
                     className='btn btn-primary'
                     disabled={!this.state.isSubmitEnabled}>Shorten</button>
-                {this.state.results.map((result, index) =>
-                    <div key={index}>Shortened {result.longUrl} as {result.shortUrl}</div>,
-                )}
+                <div className='mt-4'>
+                    {this.state.results.map((result, index) =>
+                        <div className='alert alert-success' key={index}>
+                            Shortened {result.longUrl} as <strong>{result.shortUrl}</strong>
+                        </div>,
+                    ).reverse()}
+                </div>
             </form>
         );
     }
