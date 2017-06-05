@@ -31,7 +31,8 @@ module.exports = (env = process.env) => {
     const devServerHost = config.HOST || '0.0.0.0';
     const devServerPort = config.PORT || 1111;
     const devServerBaseUrl = `http://${devServerHost}:${devServerPort}/`;
-    const debug = config.NODE_ENV !== 'production';
+    const nodeEnv = config.NODE_ENV || 'development';
+    const debug = nodeEnv !== 'production';
     const devServer = config.devServer;
     // Generate the plugins
     const plugins = [
@@ -53,6 +54,12 @@ module.exports = (env = process.env) => {
                 hash: false,
             })
         ),
+        // This will strip out development features from React when building for production
+        new webpack.DefinePlugin({
+            'process.env': {
+                NODE_ENV: JSON.stringify(nodeEnv),
+            },
+        }),
     ];
     // If building for the production, minimize the JavaScript
     if (!debug) {
