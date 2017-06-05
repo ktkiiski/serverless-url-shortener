@@ -147,7 +147,7 @@ resources:
               CustomOriginConfig:
                 OriginProtocolPolicy: http-only
             - DomainName: ${self:custom.bucketDomain}
-              Id: OriginAdmin
+              Id: OriginStatic
               CustomOriginConfig:
                 OriginProtocolPolicy: http-only
           Comment: >-
@@ -161,9 +161,9 @@ resources:
           CacheBehaviors:
             - ForwardedValues:
                 QueryString: false
-              TargetOriginId: OriginAdmin
+              TargetOriginId: OriginStatic
               ViewerProtocolPolicy: https-only
-              PathPattern: /admin/*
+              PathPattern: /static/*
           ViewerCertificate:
             AcmCertificateArn:
               Ref: DomainCertificate

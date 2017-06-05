@@ -3,15 +3,13 @@
  * that will be generated.
  */
 module.exports = {
-    // Amazon S3 bucket to which the static website is deployed
-    bucket: 'broilerplate',
     // The source folder
     sourceDir: 'src',
     // Web page configuration
     pages: [{
         title: 'URL shortener',
-        file: 'admin/index.pug',
-        scripts: ['admin/admin.tsx'],
+        file: 'admin.pug',
+        scripts: ['admin.tsx'],
     }, {
         title: 'Page not found!',
         file: 'error.pug',

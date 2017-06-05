@@ -1,13 +1,20 @@
 const gulp = require('gulp');
 const gutil = require('gulp-util');
 const del = require('del');
+const path = require('path');
 const _ = require('lodash');
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
 const createWebpackConfig = require('./webpack.config.js');
 const siteConfig = require('./site.config.js');
-const s3 = require('gulp-s3-upload')({ signatureVersion: 'v4' });
 const AWS = require('aws-sdk');
+const fs = require('fs');
+const serverlessStatePath = path.resolve(__dirname, '.serverless/serverless-state.json');
+const serverlessState = JSON.parse(fs.readFileSync(serverlessStatePath, 'utf8')).service;
+const s3 = require('gulp-s3-upload')(
+    { signatureVersion: 'v4' },
+    { region: serverlessState.provider.region }
+);
 
 // Static assets are cached for a year
 const staticAssetsCacheDuration = 31556926;
@@ -71,9 +78,10 @@ gulp.task('serve', callback => {
  */
 gulp.task('deploy:assets', ['build'], () =>
     gulp.src(['dist/**/*', '!dist/**/*.html']).pipe(s3({
-        Bucket: siteConfig.bucket,
+        Bucket: serverlessState.custom.bucketName,
         ACL: 'public-read',
         CacheControl: `max-age=${staticAssetsCacheDuration}`,
+        keyTransform: (filename) => `static/${filename}`,
     }))
 );
 
@@ -82,9 +90,10 @@ gulp.task('deploy:assets', ['build'], () =>
  */
 gulp.task('deploy:html', ['deploy:assets'], () =>
     gulp.src(['dist/**/*.html']).pipe(s3({
-        Bucket: siteConfig.bucket,
+        Bucket: serverlessState.custom.bucketName,
         ACL: 'public-read',
         CacheControl: `max-age=${staticHtmlCacheDuration}`,
+        keyTransform: (filename) => `static/${filename}`,
     }))
 );
 

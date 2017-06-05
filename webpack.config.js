@@ -79,7 +79,7 @@ module.exports = (env = process.env) => {
             // The file name template for the entry chunks
             filename: debug ? '[name].js' : '[name].[hash].js',
             // The URL to the output directory resolved relative to the HTML page
-            publicPath: devServer ? devServerBaseUrl : '/',
+            publicPath: devServer ? devServerBaseUrl : '/static/',
             // The name of the exported library, e.g. the global variable name
             library: 'app',
             // How the library is exported? E.g. 'var', 'this'
