@@ -24,6 +24,7 @@ custom:
   defaultStageDomain: "${self:custom.stage}.${self:custom.hostedZone}"
   stageDomain: ${self:custom.stageDomains.${self:custom.stage}, self:custom.defaultStageDomain}
   apiDomain: "api.${self:custom.stageDomain}"
+  stageOrigin: "https://${self:custom.stageDomain}"
 
 provider:
   name: aws
@@ -48,6 +49,7 @@ provider:
     S3_BUCKET: ${self:custom.bucketName}
     S3_REGION: ${self:provider.region}
     DOMAIN: ${self:custom.stageDomain}
+    ALLOWED_ORIGIN: ${self:custom.stageOrigin}
 
 # you can add packaging information here
 #package:
@@ -65,7 +67,18 @@ functions:
       - http:
           path: /urls
           method: post
-
+          cors:
+            origins:
+              - ${self:custom.stageOrigin}
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+              - X-Requested-With
+            allowCredentials: true
 resources:
   Resources:
     # S3 bucket for storing the URL resources
@@ -162,7 +175,7 @@ resources:
             - ForwardedValues:
                 QueryString: false
               TargetOriginId: OriginStatic
-              ViewerProtocolPolicy: https-only
+              ViewerProtocolPolicy: redirect-to-https
               PathPattern: /static/*
           ViewerCertificate:
             AcmCertificateArn:

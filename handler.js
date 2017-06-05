@@ -10,6 +10,7 @@ const url = require('url');
 // configuration to be customized
 
 const domain = process.env['DOMAIN'];
+const allowedOrigin = process.env['ALLOWED_ORIGIN'];
 const s3Bucket = process.env['S3_BUCKET'];
 const s3Region = process.env['S3_REGION'];
 const s3Prefix = 'u/';
@@ -24,7 +25,11 @@ exports.shortenUrl = (event, context, callback) => {
 
     function respond(statusCode, responseData) {
         const body = JSON.stringify(responseData);
-        const headers = {'Content-Type': 'application/json'};
+        const headers = {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin' : allowedOrigin, // Required for CORS support to work
+            'Access-Control-Allow-Credentials' : true, // Required for cookies, authorization headers with HTTPS
+        };
         callback(null, {statusCode, body, headers});
     }
 
