@@ -46,6 +46,7 @@ exports.shortenUrl = (event, context, callback) => {
     if (!((urlCheck) && (urlCheck.host))) {
         return respond(400, {detail: "Invalid URL format"});
     }
+    const protocol = urlCheck.protocol;
     const s3 = new AWS.S3({ region: s3Region });
 
     s3.putObject(
@@ -61,7 +62,7 @@ exports.shortenUrl = (event, context, callback) => {
                 respond(400, {detail: err.message});
             }
             else {
-                const shortUrl = `http://${domain}/${key}`;
+                const shortUrl = `${protocol}//${domain}/${key}`;
                 console.log(`Successfully shortened ${longUrl} to ${shortUrl}`);
                 respond(200, {longUrl: longUrl, shortUrl: shortUrl});
             }
