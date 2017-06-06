@@ -1,4 +1,4 @@
-# Serverless directories
+# Ignore Serverless output files
 .serverless
 
 # Ignore npm installed packages
