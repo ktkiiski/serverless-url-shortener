@@ -26,6 +26,10 @@ custom:
   apiDomain: "api.${self:custom.stageDomain}"
   stageOrigin: "https://${self:custom.stageDomain}"
 
+plugins:
+  # Plugin for uploading the static assets to the S3 buckets on deployment
+  - assets-upload
+
 provider:
   name: aws
   runtime: nodejs6.10
