@@ -4,5 +4,7 @@
         "*.tmpl": "html"
     },
     "html.format.endWithNewline": true,
+    "tslint.autoFixOnSave": true,
+    "tslint.jsEnable": true,
     "typescript.tsdk": "./node_modules/typescript/lib"
 }
